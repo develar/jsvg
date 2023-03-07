@@ -21,6 +21,19 @@
  */
 package com.github.weisj.jsvg.parser;
 
+import com.github.weisj.jsvg.SVGDocument;
+import com.github.weisj.jsvg.attributes.AttributeParser;
+import com.github.weisj.jsvg.nodes.SVG;
+import com.github.weisj.jsvg.nodes.SVGNode;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -29,35 +42,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
-
-import com.github.weisj.jsvg.SVGDocument;
-import com.github.weisj.jsvg.attributes.AttributeParser;
-import com.github.weisj.jsvg.nodes.*;
-import com.github.weisj.jsvg.nodes.filter.*;
-import com.github.weisj.jsvg.nodes.mesh.MeshGradient;
-import com.github.weisj.jsvg.nodes.mesh.MeshPatch;
-import com.github.weisj.jsvg.nodes.mesh.MeshRow;
-import com.github.weisj.jsvg.nodes.text.Text;
-import com.github.weisj.jsvg.nodes.text.TextPath;
-import com.github.weisj.jsvg.nodes.text.TextSpan;
-
 /**
  * Class for loading svg files as an {@link SVGDocument}.
  * Note that this class isn't guaranteed to be thread safe and hence shouldn't be used across multiple threads.
  */
-public class SVGLoader {
+public final class SVGLoader {
 
     static final Logger LOGGER = Logger.getLogger(SVGLoader.class.getName());
-    private static final @NotNull Map<String, Supplier<SVGNode>> NODE_CONSTRUCTOR_MAP = createNodeConstructorMap();
+    private static final @NotNull Map<String, Supplier<SVGNode>> NODE_CONSTRUCTOR_MAP = NodeMap.createNodeConstructorMap(new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
 
     private final @NotNull SAXParser saxParser;
 
@@ -67,70 +59,6 @@ public class SVGLoader {
 
     public SVGLoader(@NotNull SAXParser saxParser) {
         this.saxParser = saxParser;
-    }
-
-    private static @NotNull Map<String, Supplier<SVGNode>> createNodeConstructorMap() {
-        Map<String, Supplier<SVGNode>> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        map.put(Anchor.TAG, Anchor::new);
-        map.put(Circle.TAG, Circle::new);
-        map.put(ClipPath.TAG, ClipPath::new);
-        map.put(Defs.TAG, Defs::new);
-        map.put(Desc.TAG, Desc::new);
-        map.put(Ellipse.TAG, Ellipse::new);
-        map.put(FeColorMatrix.TAG, FeColorMatrix::new);
-        map.put(FeDisplacementMap.TAG, FeDisplacementMap::new);
-        map.put(FeGaussianBlur.TAG, FeGaussianBlur::new);
-        map.put(FeTurbulence.TAG, FeTurbulence::new);
-        map.put(Filter.TAG, Filter::new);
-        map.put(Group.TAG, Group::new);
-        map.put(Image.TAG, Image::new);
-        map.put(Line.TAG, Line::new);
-        map.put(LinearGradient.TAG, LinearGradient::new);
-        map.put(Marker.TAG, Marker::new);
-        map.put(Mask.TAG, Mask::new);
-        map.put(MeshGradient.TAG, MeshGradient::new);
-        map.put(MeshPatch.TAG, MeshPatch::new);
-        map.put(MeshRow.TAG, MeshRow::new);
-        map.put(Metadata.TAG, Metadata::new);
-        map.put(Path.TAG, Path::new);
-        map.put(Pattern.TAG, Pattern::new);
-        map.put(Polygon.TAG, Polygon::new);
-        map.put(Polyline.TAG, Polyline::new);
-        map.put(RadialGradient.TAG, RadialGradient::new);
-        map.put(Rect.TAG, Rect::new);
-        map.put(SVG.TAG, SVG::new);
-        map.put(SolidColor.TAG, SolidColor::new);
-        map.put(Stop.TAG, Stop::new);
-        map.put(Style.TAG, Style::new);
-        map.put(Symbol.TAG, Symbol::new);
-        map.put(Text.TAG, Text::new);
-        map.put(TextPath.TAG, TextPath::new);
-        map.put(TextSpan.TAG, TextSpan::new);
-        map.put(Title.TAG, Title::new);
-        map.put(Use.TAG, Use::new);
-        map.put(View.TAG, View::new);
-
-        map.put(FeBlend.TAG, FeBlend::new);
-        map.put(FeFlood.TAG, FeFlood::new);
-
-        map.put("feComponentTransfer", () -> new DummyFilterPrimitive("feComponentTransfer"));
-        map.put("feComposite", () -> new DummyFilterPrimitive("feComposite"));
-        map.put("feConvolveMatrix", () -> new DummyFilterPrimitive("feConvolveMatrix"));
-        map.put("feDiffuseLightning", () -> new DummyFilterPrimitive("feDiffuseLightning"));
-        map.put("feDisplacementMap", () -> new DummyFilterPrimitive("feDisplacementMap"));
-        map.put("feDropShadow", () -> new DummyFilterPrimitive("feDropShadow"));
-        map.put("feFuncA", () -> new DummyFilterPrimitive("feFuncA"));
-        map.put("feFuncB", () -> new DummyFilterPrimitive("feFuncB"));
-        map.put("feFuncG", () -> new DummyFilterPrimitive("feFuncG"));
-        map.put("feFuncR", () -> new DummyFilterPrimitive("feFuncR"));
-        map.put("feImage", () -> new DummyFilterPrimitive("feImage"));
-        map.put("feMerge", () -> new DummyFilterPrimitive("feMerge"));
-        map.put("feMorphology", () -> new DummyFilterPrimitive("feMorphology"));
-        map.put("feOffset", () -> new DummyFilterPrimitive("feOffset"));
-        map.put("feSpecularLighting", () -> new DummyFilterPrimitive("feSpecularLighting"));
-        map.put("feTile", () -> new DummyFilterPrimitive("feTile"));
-
-        return map;
     }
 
     private static @NotNull SAXParser createSaxParser() {
@@ -199,7 +127,7 @@ public class SVGLoader {
         return null;
     }
 
-    private InputStream createDocumentInputStream(@NotNull InputStream is) throws IOException {
+    private static InputStream createDocumentInputStream(@NotNull InputStream is) throws IOException {
         BufferedInputStream bin = new BufferedInputStream(is);
         bin.mark(2);
         int b0 = bin.read();
@@ -215,22 +143,14 @@ public class SVGLoader {
         }
     }
 
-    interface LoadHelper {
-        @NotNull
-        AttributeParser attributeParser();
-
-        @NotNull
-        ResourceLoader resourceLoader();
-    }
-
-    private static class SVGLoadHandler extends DefaultHandler implements LoadHelper {
+    private static final class SVGLoadHandler extends DefaultHandler implements LoadHelper {
 
         private static final boolean DEBUG_PRINT = false;
         private final PrintStream printer = System.out;
         private int nestingLevel = 0;
         private String ident = "";
 
-        private final Map<String, Object> namedElements = new HashMap<>();
+        private final Map<String, ParsedElement> namedElements = new HashMap<>();
         private final Deque<ParsedElement> currentNodeStack = new ArrayDeque<>();
 
         private ParsedElement rootNode;
@@ -256,14 +176,10 @@ public class SVGLoader {
         }
 
         private void setIdent(int level) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < level; i++) {
-                builder.append(" ");
-            }
-            ident = builder.toString();
+            ident = " ".repeat(Math.max(0, level));
         }
 
-        private boolean isBlank(String text) {
+        private static boolean isBlank(String text) {
             for (int i = 0; i < text.length(); i++) {
                 if (text.charAt(i) > ' ') return false;
             }
@@ -335,7 +251,7 @@ public class SVGLoader {
             }
         }
 
-        private void flushText(@NotNull ParsedElement element, boolean segmentBreak) {
+        private static void flushText(@NotNull ParsedElement element, boolean segmentBreak) {
             if (element.characterDataParser != null && element.characterDataParser.canFlush(segmentBreak)) {
                 element.node().addContent(element.characterDataParser.flush(segmentBreak));
             }

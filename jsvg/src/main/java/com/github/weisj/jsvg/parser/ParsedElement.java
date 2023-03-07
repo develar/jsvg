@@ -21,17 +21,16 @@
  */
 package com.github.weisj.jsvg.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.nodes.SVGNode;
 import com.github.weisj.jsvg.nodes.prototype.Container;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ParsedElement {
+import java.util.ArrayList;
+import java.util.List;
+
+public final class ParsedElement {
 
     private enum BuildStatus {
         NO,
@@ -46,7 +45,7 @@ public class ParsedElement {
     final CharacterDataParser characterDataParser;
     private @NotNull BuildStatus buildStatus = BuildStatus.NO;
 
-    ParsedElement(@Nullable String id, @NotNull AttributeNode element, @NotNull SVGNode node) {
+    public ParsedElement(@Nullable String id, @NotNull AttributeNode element, @NotNull SVGNode node) {
         this.id = id;
         this.attributeNode = element;
         this.node = node;
@@ -59,10 +58,6 @@ public class ParsedElement {
         } else {
             characterDataParser = null;
         }
-    }
-
-    public void registerNamedElement(@NotNull String name, @NotNull Object element) {
-        attributeNode.namedElements().put(name, element);
     }
 
     public @Nullable String id() {
@@ -90,14 +85,14 @@ public class ParsedElement {
         return attributeNode;
     }
 
-    void addChild(ParsedElement parsedElement) {
+    public void addChild(ParsedElement parsedElement) {
         children.add(parsedElement);
         if (node instanceof Container) {
             ((Container<?>) node).addChild(parsedElement.id, parsedElement.node);
         }
     }
 
-    void build() {
+    public void build() {
         if (buildStatus == BuildStatus.YES) return;
         if (buildStatus == BuildStatus.BUILDING) {
             warnAboutCyclicDependency();

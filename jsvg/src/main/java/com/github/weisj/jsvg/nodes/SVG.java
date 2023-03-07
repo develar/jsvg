@@ -21,11 +21,8 @@
  */
 package com.github.weisj.jsvg.nodes;
 
-import java.awt.geom.Point2D;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.github.weisj.jsvg.attributes.Overflow;
+import com.github.weisj.jsvg.attributes.ViewBox;
 import com.github.weisj.jsvg.geometry.size.FloatSize;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
@@ -37,6 +34,9 @@ import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
 import com.github.weisj.jsvg.nodes.text.Text;
 import com.github.weisj.jsvg.parser.AttributeNode;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.geom.Point2D;
 
 @ElementCategories({Category.Container, Category.Structural})
 @PermittedContent(
@@ -57,6 +57,25 @@ public final class SVG extends CommonInnerViewContainer {
 
     private boolean isTopLevel;
 
+    // JB custom property
+    private boolean isDataScaled;
+
+    public boolean isDataScaled() {
+        return isDataScaled;
+    }
+
+    public Length getWidth() {
+      return width;
+    }
+
+    public Length getHeight() {
+      return height;
+    }
+
+    public ViewBox getViewBox() {
+      return viewBox;
+    }
+
     @Override
     public @NotNull String tagName() {
         return TAG;
@@ -74,6 +93,7 @@ public final class SVG extends CommonInnerViewContainer {
     @Override
     public void build(@NotNull AttributeNode attributeNode) {
         isTopLevel = attributeNode.parent() == null;
+        isDataScaled = Boolean.parseBoolean(attributeNode.getValue("data-scaled"));
         super.build(attributeNode);
     }
 

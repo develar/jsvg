@@ -21,15 +21,6 @@
  */
 package com.github.weisj.jsvg.renderer;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.ImageProducer;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.FillRule;
 import com.github.weisj.jsvg.attributes.Percentage;
 import com.github.weisj.jsvg.attributes.ViewBox;
@@ -40,8 +31,15 @@ import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.attributes.stroke.StrokeResolver;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.nodes.prototype.Mutator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class RenderContext {
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.ImageProducer;
+
+public final class RenderContext {
 
     private final @Nullable JComponent targetComponent;
     private final @NotNull MeasureContext measureContext;

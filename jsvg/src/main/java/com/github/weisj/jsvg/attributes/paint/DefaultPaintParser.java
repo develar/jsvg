@@ -21,21 +21,19 @@
  */
 package com.github.weisj.jsvg.attributes.paint;
 
+import com.github.weisj.jsvg.attributes.AttributeParser;
+import com.github.weisj.jsvg.parser.AttributeNode;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.github.weisj.jsvg.attributes.AttributeParser;
-import com.github.weisj.jsvg.parser.AttributeNode;
-
-public class DefaultPaintParser implements PaintParser {
+public final class DefaultPaintParser implements PaintParser {
     private static final Logger LOGGER = Logger.getLogger(DefaultPaintParser.class.getName());
 
     // Todo: Handle hsl(), hsla() per the SVG 2.0 spec requirement
@@ -46,36 +44,32 @@ public class DefaultPaintParser implements PaintParser {
             if (value.charAt(0) == '#') {
                 int rgba = 0xff000000;
                 switch (value.length()) {
-                    case 4:
+                    case 4 ->
                         // Short rgb
-                        rgba = parseHex(new char[] {
-                                value.charAt(1), value.charAt(1),
-                                value.charAt(2), value.charAt(2),
-                                value.charAt(3), value.charAt(3),
-                                'F', 'F'});
-                        break;
-                    case 5:
+                        rgba = parseHex(new char[]{
+                            value.charAt(1), value.charAt(1),
+                            value.charAt(2), value.charAt(2),
+                            value.charAt(3), value.charAt(3),
+                            'F', 'F'});
+                    case 5 ->
                         // Short rgba
-                        rgba = parseHex(new char[] {
-                                value.charAt(1), value.charAt(1),
-                                value.charAt(2), value.charAt(2),
-                                value.charAt(3), value.charAt(3),
-                                value.charAt(4), value.charAt(4)});
-                        break;
-                    case 7:
+                        rgba = parseHex(new char[]{
+                            value.charAt(1), value.charAt(1),
+                            value.charAt(2), value.charAt(2),
+                            value.charAt(3), value.charAt(3),
+                            value.charAt(4), value.charAt(4)});
+                    case 7 ->
                         // Long rgb
-                        rgba = parseHex(new char[] {
-                                value.charAt(1), value.charAt(2),
-                                value.charAt(3), value.charAt(4),
-                                value.charAt(5), value.charAt(6),
-                                'F', 'F'});
-                        break;
-                    case 9:
+                        rgba = parseHex(new char[]{
+                            value.charAt(1), value.charAt(2),
+                            value.charAt(3), value.charAt(4),
+                            value.charAt(5), value.charAt(6),
+                            'F', 'F'});
+                    case 9 ->
                         // Long rgba
                         rgba = parseHex(value.substring(1).toCharArray());
-                        break;
-                    default:
-                        break;
+                    default -> {
+                    }
                 }
                 return new Color(rgba, true);
             } else if (value.length() > 3 && value.substring(0, 3).equalsIgnoreCase("rgb")) {
@@ -111,7 +105,7 @@ public class DefaultPaintParser implements PaintParser {
         return new AwtSVGPaint(color);
     }
 
-    private int parseColorComponent(String value, boolean percentage, @NotNull AttributeParser parser) {
+    private static int parseColorComponent(String value, boolean percentage, @NotNull AttributeParser parser) {
         float parsed;
         if (value.endsWith("%")) {
             parsed = parser.parseFloat(value.substring(0, value.length() - 1), 0);
@@ -124,7 +118,7 @@ public class DefaultPaintParser implements PaintParser {
         return Math.min(255, Math.max(0, (int) parsed));
     }
 
-    private int parseHex(char[] chars) {
+    private static int parseHex(char[] chars) {
         int r = charToColorInt(chars[0]) << 4 | charToColorInt(chars[1]);
         int g = charToColorInt(chars[2]) << 4 | charToColorInt(chars[3]);
         int b = charToColorInt(chars[4]) << 4 | charToColorInt(chars[5]);
@@ -135,7 +129,7 @@ public class DefaultPaintParser implements PaintParser {
                 (b & 0xFF);
     }
 
-    private int charToColorInt(char c) {
+    private static int charToColorInt(char c) {
         if (c >= '0' && c <= '9') {
             return c - '0';
         } else if (c >= 'a' && c <= 'z') {
@@ -147,11 +141,13 @@ public class DefaultPaintParser implements PaintParser {
         }
     }
 
-    private static class ColorLookup {
+    private static final class ColorLookup {
         private static Map<String, Color> colorMap;
 
         private static Map<String, Color> colorMap() {
-            if (colorMap != null) return colorMap;
+            if (colorMap != null) {
+                return colorMap;
+            }
             colorMap = new HashMap<>(143);
 
             colorMap.put("aliceblue", new Color(0xf0f8ff));
@@ -303,7 +299,7 @@ public class DefaultPaintParser implements PaintParser {
             colorMap.put("whitesmoke", new Color(0xf5f5f5));
             colorMap.put("yellow", new Color(0xffff00));
             colorMap.put("yellowgreen", new Color(0x9acd32));
-            colorMap = Collections.unmodifiableMap(colorMap);
+            colorMap = Map.copyOf(colorMap);
             return colorMap;
         }
     }

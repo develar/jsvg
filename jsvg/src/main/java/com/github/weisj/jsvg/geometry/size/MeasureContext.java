@@ -21,16 +21,15 @@
  */
 package com.github.weisj.jsvg.geometry.size;
 
-import java.util.Objects;
-
+import com.github.weisj.jsvg.attributes.ViewBox;
+import com.google.errorprone.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.github.weisj.jsvg.attributes.ViewBox;
-import com.google.errorprone.annotations.Immutable;
+import java.util.Objects;
 
 @Immutable
-public class MeasureContext {
+public final class MeasureContext {
     private final float vw;
     private final float vh;
     private final float em;

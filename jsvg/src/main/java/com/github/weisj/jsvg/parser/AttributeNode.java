@@ -21,16 +21,9 @@
  */
 package com.github.weisj.jsvg.parser;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.util.Locale;
-import java.util.Map;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.github.weisj.jsvg.attributes.*;
+import com.github.weisj.jsvg.attributes.AttributeParser;
+import com.github.weisj.jsvg.attributes.Percentage;
+import com.github.weisj.jsvg.attributes.ViewBox;
 import com.github.weisj.jsvg.attributes.paint.PaintParser;
 import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.geometry.size.Length;
@@ -40,8 +33,16 @@ import com.github.weisj.jsvg.nodes.Mask;
 import com.github.weisj.jsvg.nodes.filter.Filter;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class AttributeNode {
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.util.Locale;
+import java.util.Map;
+
+public final class AttributeNode {
     private static final Length TopOrLeft = new Length(Unit.PERCENTAGE, 0f);
     private static final Length Center = new Length(Unit.PERCENTAGE, 50f);
     private static final Length BottomOrRight = new Length(Unit.PERCENTAGE, 100f);
@@ -49,13 +50,13 @@ public class AttributeNode {
     private final @NotNull String tagName;
     private final @NotNull Map<String, String> attributes;
     private final @Nullable AttributeNode parent;
-    private final @NotNull Map<@NotNull String, @NotNull Object> namedElements;
+    private final @NotNull Map<@NotNull String, @NotNull ParsedElement> namedElements;
 
-    private final @NotNull SVGLoader.LoadHelper loadHelper;
+    private final @NotNull LoadHelper loadHelper;
 
     public AttributeNode(@NotNull String tagName, @NotNull Map<String, String> attributes,
-            @Nullable AttributeNode parent, @NotNull Map<@NotNull String, @NotNull Object> namedElements,
-            @NotNull SVGLoader.LoadHelper loadHelper) {
+            @Nullable AttributeNode parent, @NotNull Map<@NotNull String, @NotNull ParsedElement> namedElements,
+            @NotNull LoadHelper loadHelper) {
         this.tagName = tagName;
         this.attributes = preprocessAttributes(attributes);
         this.parent = parent;
@@ -64,7 +65,7 @@ public class AttributeNode {
     }
 
     @NotNull
-    Map<String, Object> namedElements() {
+    Map<String, ParsedElement> namedElements() {
         return namedElements;
     }
 
@@ -89,7 +90,7 @@ public class AttributeNode {
         if (id == null) return null;
         // Todo: Look up in spec how elements should be resolved if multiple elements have the same id.
         Object node = namedElements.get(id);
-        if (node instanceof ParsedElement) {
+        if (node != null) {
             node = ((ParsedElement) node).nodeEnsuringBuildStatus();
         }
         return type.isInstance(node) ? type.cast(node) : null;
@@ -124,7 +125,7 @@ public class AttributeNode {
         return tagName;
     }
 
-    public boolean tagIsOneOf(@NotNull String... tags) {
+    public boolean tagIsOneOf(String @NotNull ... tags) {
         for (String tag : tags) {
             if (tagName.equals(tag)) return true;
         }
@@ -207,7 +208,7 @@ public class AttributeNode {
         return loadHelper.attributeParser().parsePercentage(getValue(key), fallback);
     }
 
-    public @NotNull Length[] getLengthList(@NotNull String key) {
+    public Length @NotNull [] getLengthList(@NotNull String key) {
         return loadHelper.attributeParser().parseLengthList(getValue(key));
     }
 
@@ -247,12 +248,12 @@ public class AttributeNode {
         return attributes.containsKey(name);
     }
 
-    public @NotNull String[] getStringList(@NotNull String name) {
+    public String @NotNull [] getStringList(@NotNull String name) {
         return getStringList(name, false);
     }
 
 
-    public @NotNull String[] getStringList(@NotNull String name, boolean requireComma) {
+    public String @NotNull [] getStringList(@NotNull String name, boolean requireComma) {
         return loadHelper.attributeParser().parseStringList(getValue(name), requireComma);
     }
 

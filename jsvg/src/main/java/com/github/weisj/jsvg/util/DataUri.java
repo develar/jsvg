@@ -56,7 +56,7 @@ import org.jetbrains.annotations.Nullable;
  *
  *  Note: This file has been modified for usage in the JSVG project.
  */
-class DataUri {
+final class DataUri {
     private static final String CHARSET_OPTION_NAME = "charset";
     private static final String FILENAME_OPTION_NAME = "filename";
     private static final String CONTENT_DISPOSITION_OPTION_NAME = "content-disposition";
