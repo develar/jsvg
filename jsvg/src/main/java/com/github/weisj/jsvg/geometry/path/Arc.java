@@ -101,11 +101,11 @@ class Arc extends PathCommand {
      * @param x0 - The absolute x coordinate of the initial point of the arc.
      * @param y0 - The absolute y coordinate of the initial point of the arc.
      */
-    private void arcTo(@NotNull Path2D path, float rx, float ry,
-            float angle,
-            boolean largeArcFlag,
-            boolean sweepFlag,
-            float x, float y, float x0, float y0) {
+    private static void arcTo(@NotNull Path2D path, float rx, float ry,
+                              float angle,
+                              boolean largeArcFlag,
+                              boolean sweepFlag,
+                              float x, float y, float x0, float y0) {
 
         // Ensure radii are valid
         if (rx == 0 || ry == 0) {

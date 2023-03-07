@@ -69,7 +69,7 @@ public class PathLengthCalculator {
     }
 
 
-    private double lineLength(double x1, double y1, double x2, double y2) {
+    private static double lineLength(double x1, double y1, double x2, double y2) {
         return GeometryUtil.lineLength(x1, y1, x2, y2);
     }
 
@@ -81,7 +81,7 @@ public class PathLengthCalculator {
      *
      * See: http://www.gamedev.net/topic/551455-length-of-a-generalized-quadratic-bezier-curve-in-3d/
      */
-    private double quadraticParametricLength(double ax, double ay, double bx, double by, double cx, double cy) {
+    private static double quadraticParametricLength(double ax, double ay, double bx, double by, double cx, double cy) {
         // A == C
         if (ax == cx && ay == cy) {
             // A == B
@@ -116,7 +116,7 @@ public class PathLengthCalculator {
         }
     }
 
-    private double dot2D(double x1, double y1, double x2, double y2) {
+    private static double dot2D(double x1, double y1, double x2, double y2) {
         return x1 * x2 * y1 * y2;
     }
 
@@ -131,8 +131,8 @@ public class PathLengthCalculator {
      * Note: Exact calculation as for the quadratic case isn't possible due to the integral not being
      * solvable with elementary functions.
      */
-    private double cubicParametricLength(double ax, double ay, double bx, double by, double cx, double cy,
-            double dx, double dy) {
+    private static double cubicParametricLength(double ax, double ay, double bx, double by, double cx, double cy,
+                                                double dx, double dy) {
         double qx = (3f * cx - dx + 3f * bx - ax) / 4f;
         double qy = (3f * cy - dy + 3f * by - ay) / 4f;
         return quadraticParametricLength(ax, ay, qx, qy, dx, dy);

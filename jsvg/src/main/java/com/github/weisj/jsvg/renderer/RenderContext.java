@@ -177,7 +177,7 @@ public final class RenderContext {
         return coerceNonNull(p);
     }
 
-    private @NotNull SVGPaint coerceNonNull(@Nullable SVGPaint p) {
+    private static @NotNull SVGPaint coerceNonNull(@Nullable SVGPaint p) {
         return p != null ? p : SVGPaint.DEFAULT_PAINT;
     }
 

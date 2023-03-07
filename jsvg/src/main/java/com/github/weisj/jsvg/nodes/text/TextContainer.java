@@ -129,7 +129,7 @@ abstract class TextContainer extends BaseContainerNode<TextSegment>
         renderSegmentWithoutLayout(cursor, context, g);
     }
 
-    private double textAnchorOffset(@NotNull TextAnchor textAnchor, @NotNull GlyphCursor glyphCursor) {
+    private static double textAnchorOffset(@NotNull TextAnchor textAnchor, @NotNull GlyphCursor glyphCursor) {
         switch (textAnchor) {
             default:
             case Start:
@@ -201,8 +201,8 @@ abstract class TextContainer extends BaseContainerNode<TextSegment>
                 metrics.fixedGlyphLength, metrics.controllableLetterSpacingCount);
     }
 
-    private void accumulateRenderableSegmentMetrics(@NotNull RenderableSegment segment,
-            @NotNull IntermediateTextMetrics metrics, @NotNull RenderContext currentContext) {
+    private static void accumulateRenderableSegmentMetrics(@NotNull RenderableSegment segment,
+                                                           @NotNull IntermediateTextMetrics metrics, @NotNull RenderContext currentContext) {
         TextMetrics textMetrics = segment.computeTextMetrics(currentContext, UseTextLengthForCalculation.YES);
         metrics.letterSpacingLength += textMetrics.letterSpacingLength();
         metrics.glyphLength += textMetrics.glyphLength();

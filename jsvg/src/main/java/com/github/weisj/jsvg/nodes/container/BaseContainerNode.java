@@ -21,17 +21,16 @@
  */
 package com.github.weisj.jsvg.nodes.container;
 
-import java.util.logging.Logger;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.nodes.AbstractSVGNode;
 import com.github.weisj.jsvg.nodes.SVGNode;
 import com.github.weisj.jsvg.nodes.prototype.Container;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 public abstract class BaseContainerNode<E> extends AbstractSVGNode implements Container<E> {
     private static final boolean EXHAUSTIVE_CHECK = true;
@@ -85,7 +84,7 @@ public abstract class BaseContainerNode<E> extends AbstractSVGNode implements Co
         return false;
     }
 
-    private CategoryCheckResult doIntersect(Category[] requested, Category[] provided) {
+    private static CategoryCheckResult doIntersect(Category[] requested, Category[] provided) {
         // Expected sizes for theses arrays is pretty small hence we don't need to
         // be smart about the intersection check.
         CategoryCheckResult result = CategoryCheckResult.Denied;

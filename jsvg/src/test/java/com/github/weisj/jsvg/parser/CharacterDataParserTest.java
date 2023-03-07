@@ -74,7 +74,7 @@ class CharacterDataParserTest {
         assertAddressableChars("A ", "A ", true);
     }
 
-    private void assertAddressableChars(String input, String output, boolean partialFlush) {
+    private static void assertAddressableChars(String input, String output, boolean partialFlush) {
         CharacterDataParser parser = new CharacterDataParser();
         parser.append(input.toCharArray(), 0, input.length());
         char[] expected = output.toCharArray();

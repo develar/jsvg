@@ -99,7 +99,7 @@ public final class MeshPatch extends ContainerNode {
         return new Color(clampColor(r), clampColor(g), clampColor(b), clampColor(a));
     }
 
-    private int clampColor(float v) {
+    private static int clampColor(float v) {
         return Math.max(Math.min(255, (int) v), 0);
     }
 }

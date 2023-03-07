@@ -242,7 +242,7 @@ public final class PerlinTurbulence {
         System.arraycopy(fSum, 0, turbulenceChannels, 0, fSum.length);
     }
 
-    private double adjustFrequency(double frequency, double tileSize) {
+    private static double adjustFrequency(double frequency, double tileSize) {
         double fLoFreq = Math.floor(tileSize * frequency) / tileSize;
         double fHiFreq = Math.ceil(tileSize * frequency) / tileSize;
         if (frequency / fLoFreq < fHiFreq / frequency) {

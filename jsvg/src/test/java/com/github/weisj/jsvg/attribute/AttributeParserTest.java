@@ -59,7 +59,7 @@ class AttributeParserTest {
         }
     }
 
-    private Float[] box(float[] arr) {
+    private static Float[] box(float[] arr) {
         Float[] boxed = new Float[arr.length];
         for (int i = 0; i < arr.length; i++) {
             boxed[i] = arr[i];
@@ -77,7 +77,7 @@ class AttributeParserTest {
         }
     }
 
-    private <T> String appendToList(T[] arr, Random r, boolean requireComma) {
+    private static <T> String appendToList(T[] arr, Random r, boolean requireComma) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < arr.length; i++) {
             builder.append(arr[i]);
@@ -89,7 +89,7 @@ class AttributeParserTest {
         return builder.toString();
     }
 
-    private float[] generateRandomFloatArray(Random r) {
+    private static float[] generateRandomFloatArray(Random r) {
         int count = 5 + r.nextInt(10);
         float[] arr = new float[count];
         for (int i = 0; i < count; i++) {
@@ -98,7 +98,7 @@ class AttributeParserTest {
         return arr;
     }
 
-    private String[] generateRandomStringArray(Random r) {
+    private static String[] generateRandomStringArray(Random r) {
         int count = 5 + r.nextInt(10);
         String[] arr = new String[count];
         for (int i = 0; i < count; i++) {
@@ -107,7 +107,7 @@ class AttributeParserTest {
         return arr;
     }
 
-    private String generateRandomString(Random random) {
+    private static String generateRandomString(Random random) {
         int leftLimit = 48; // numeral '0'
         int rightLimit = 122; // letter 'z'
         int targetStringLength = 10;

@@ -63,7 +63,7 @@ abstract class LinearTextContainer extends TextContainer {
         renderSegment(createCursor(), context, g);
     }
 
-    private @NotNull GlyphCursor createCursor() {
+    private static @NotNull GlyphCursor createCursor() {
         return new GlyphCursor(0, 0, new AffineTransform());
     }
 

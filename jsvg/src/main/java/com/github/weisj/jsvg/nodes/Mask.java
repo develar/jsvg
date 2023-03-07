@@ -152,7 +152,7 @@ public final class Mask extends CommonRenderableContainerNode implements Instant
         return new MaskedPaint(PaintParser.DEFAULT_COLOR, img.getRaster(), offset);
     }
 
-    private boolean isInvalidMaskingArea(@NotNull Rectangle2D area) {
+    private static boolean isInvalidMaskingArea(@NotNull Rectangle2D area) {
         return area.isEmpty() || Double.isNaN(area.getWidth()) || Double.isNaN(area.getHeight());
     }
 

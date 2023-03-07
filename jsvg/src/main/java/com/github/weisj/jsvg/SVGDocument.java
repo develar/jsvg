@@ -21,14 +21,6 @@
  */
 package com.github.weisj.jsvg;
 
-import java.awt.*;
-import java.util.Objects;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.ViewBox;
 import com.github.weisj.jsvg.attributes.font.SVGFont;
 import com.github.weisj.jsvg.geometry.size.FloatSize;
@@ -36,6 +28,12 @@ import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.nodes.SVG;
 import com.github.weisj.jsvg.renderer.NodeRenderer;
 import com.github.weisj.jsvg.renderer.RenderContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Objects;
 
 public class SVGDocument {
     private static final boolean DEBUG = false;
@@ -90,7 +88,7 @@ public class SVGDocument {
         g.dispose();
     }
 
-    private void setupSVGRenderingHints(@NotNull Graphics2D g) {
+    private static void setupSVGRenderingHints(@NotNull Graphics2D g) {
         Object aaHint = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
         if (aaHint != RenderingHints.VALUE_ANTIALIAS_DEFAULT) setSVGRenderingHint(g,
                 SVGRenderingHints.KEY_IMAGE_ANTIALIASING,
@@ -99,7 +97,7 @@ public class SVGDocument {
                         : SVGRenderingHints.VALUE_IMAGE_ANTIALIASING_OFF);
     }
 
-    private void setSVGRenderingHint(@NotNull Graphics2D g, @NotNull RenderingHints.Key key, @NotNull Object o) {
+    private static void setSVGRenderingHint(@NotNull Graphics2D g, @NotNull RenderingHints.Key key, @NotNull Object o) {
         if (g.getRenderingHint(key) == null) {
             g.setRenderingHint(key, o);
         }

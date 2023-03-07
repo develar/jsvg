@@ -197,11 +197,11 @@ class PathGlyphCursor extends GlyphCursor {
         remainingSegmentLength -= distance;
     }
 
-    private float calculateSegmentRotation(float x1, float y1, float x2, float y2) {
+    private static float calculateSegmentRotation(float x1, float y1, float x2, float y2) {
         return (float) Math.atan2(y2 - y1, x2 - x1);
     }
 
-    private float norm(float a, float b) {
+    private static float norm(float a, float b) {
         return (float) Math.sqrt(a * a + b * b);
     }
 }

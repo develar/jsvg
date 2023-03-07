@@ -49,11 +49,11 @@ public class PathParser {
         return "(index=" + index + " in input=" + input + ")";
     }
 
-    private boolean isCommandChar(char c) {
+    private static boolean isCommandChar(char c) {
         return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
     }
 
-    private boolean isWhiteSpaceOrSeparator(char c) {
+    private static boolean isWhiteSpaceOrSeparator(char c) {
         return c == ',' || Character.isWhitespace(c);
     }
 
