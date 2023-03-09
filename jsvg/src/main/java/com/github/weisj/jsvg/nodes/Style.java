@@ -34,7 +34,7 @@ public final class Style extends MetaSVGNode {
     public static final String TAG = "style";
 
     public Style() {
-        Logger.getLogger(Style.class.getName()).warning("Stylesheets not yet implemented");
+        //Logger.getLogger(Style.class.getName()).warning("Stylesheets not yet implemented");
     }
 
     @Override
