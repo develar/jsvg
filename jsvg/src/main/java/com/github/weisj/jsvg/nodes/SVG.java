@@ -23,6 +23,7 @@ package com.github.weisj.jsvg.nodes;
 
 import com.github.weisj.jsvg.attributes.Overflow;
 import com.github.weisj.jsvg.attributes.ViewBox;
+import com.github.weisj.jsvg.attributes.font.SVGFont;
 import com.github.weisj.jsvg.geometry.size.FloatSize;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
@@ -34,9 +35,13 @@ import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
 import com.github.weisj.jsvg.nodes.text.Text;
 import com.github.weisj.jsvg.parser.AttributeNode;
+import com.github.weisj.jsvg.renderer.NodeRenderer;
+import com.github.weisj.jsvg.renderer.RenderContext;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.Objects;
 
 @ElementCategories({Category.Container, Category.Structural})
 @PermittedContent(
@@ -46,7 +51,7 @@ import java.awt.geom.Point2D;
      * <switch>
      */
     anyOf = {Anchor.class, ClipPath.class, Filter.class, Image.class, Mask.class, Marker.class, Pattern.class,
-            Style.class, Text.class, View.class}
+        Style.class, Text.class, View.class}
 )
 public final class SVG extends CommonInnerViewContainer {
     public static final String TAG = "svg";
@@ -65,15 +70,15 @@ public final class SVG extends CommonInnerViewContainer {
     }
 
     public Length getWidth() {
-      return width;
+        return width;
     }
 
     public Length getHeight() {
-      return height;
+        return height;
     }
 
     public ViewBox getViewBox() {
-      return viewBox;
+        return viewBox;
     }
 
     @Override
@@ -101,8 +106,8 @@ public final class SVG extends CommonInnerViewContainer {
     public @NotNull Point2D transformOrigin(@NotNull MeasureContext context) {
         if (!isTopLevel) return super.transformOrigin(context);
         return new Point2D.Float(
-                TOP_LEVEL_TRANSFORM_ORIGIN.resolveWidth(context),
-                TOP_LEVEL_TRANSFORM_ORIGIN.resolveHeight(context));
+            TOP_LEVEL_TRANSFORM_ORIGIN.resolveWidth(context),
+            TOP_LEVEL_TRANSFORM_ORIGIN.resolveHeight(context));
     }
 
     @Override
@@ -114,9 +119,26 @@ public final class SVG extends CommonInnerViewContainer {
         // Use a viewport of size 100x100 to interpret percentage values as raw pixels.
         MeasureContext topLevelContext = MeasureContext.createInitial(new FloatSize(100, 100), em, ex);
         return new FloatSize(
-                width.orElseIfUnspecified(viewBox != null ? viewBox.width : FALLBACK_WIDTH)
-                        .resolveWidth(topLevelContext),
-                height.orElseIfUnspecified(viewBox != null ? viewBox.height : FALLBACK_HEIGHT)
-                        .resolveHeight(topLevelContext));
+            width.orElseIfUnspecified(viewBox != null ? viewBox.width : FALLBACK_WIDTH)
+                .resolveWidth(topLevelContext),
+            height.orElseIfUnspecified(viewBox != null ? viewBox.height : FALLBACK_HEIGHT)
+                .resolveHeight(topLevelContext));
+    }
+
+    public void renderWithSize(float width, float height, float em, Graphics2D g) {
+        MeasureContext measureContext = new MeasureContext(width, height, em, SVGFont.exFromEm(em));
+        RenderContext context = RenderContext.createInitial(null, measureContext);
+        ViewBox bounds = new ViewBox(width, height);
+        applyTransform(g, context);
+        g.clip(bounds);
+        try (NodeRenderer.Info info = NodeRenderer.createRenderInfo(this, context, g, null)) {
+            renderWithSize(
+                /* useSiteSize = */ bounds.size(),
+                /* view = */ viewBox(context),
+                /* preserveAspectRatio = */ null,
+                /* context = */ Objects.requireNonNull(info).context,
+                /* g = */ info.g
+            );
+        }
     }
 }
