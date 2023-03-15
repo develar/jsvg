@@ -21,13 +21,13 @@
  */
 package com.github.weisj.jsvg.attributes.paint;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.util.Objects;
 
-import org.jetbrains.annotations.NotNull;
-
-
-public class AwtSVGPaint implements SimplePaintSVGPaint {
+public final class AwtSVGPaint implements SimplePaintSVGPaint {
+    public static final AwtSVGPaint DEFAULT_PAINT = new AwtSVGPaint(PaintParser.DEFAULT_COLOR);
 
     private final @NotNull Paint paint;
 
@@ -43,8 +43,7 @@ public class AwtSVGPaint implements SimplePaintSVGPaint {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AwtSVGPaint)) return false;
-        AwtSVGPaint that = (AwtSVGPaint) o;
+        if (!(o instanceof AwtSVGPaint that)) return false;
         return paint.equals(that.paint);
     }
 
@@ -61,8 +60,7 @@ public class AwtSVGPaint implements SimplePaintSVGPaint {
     }
 
     private @NotNull String formatPaint() {
-        if (paint instanceof Color) {
-            Color c = (Color) paint;
+        if (paint instanceof Color c) {
             return "Color{"
                     + "r=" + c.getRed()
                     + ",g=" + c.getGreen()

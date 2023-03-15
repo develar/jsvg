@@ -21,19 +21,17 @@
  */
 package com.github.weisj.jsvg.renderer;
 
-
-import java.awt.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.Percentage;
 import com.github.weisj.jsvg.attributes.paint.AwtSVGPaint;
 import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.nodes.prototype.Mutator;
 import com.github.weisj.jsvg.parser.AttributeNode;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class PaintContext implements Mutator<PaintContext> {
+import java.awt.*;
+
+public final class PaintContext implements Mutator<PaintContext> {
 
     public final @Nullable AwtSVGPaint color;
     public final @Nullable SVGPaint fillPaint;
@@ -60,8 +58,8 @@ public class PaintContext implements Mutator<PaintContext> {
 
     public static @NotNull PaintContext createDefault() {
         return new PaintContext(
-                SVGPaint.DEFAULT_PAINT,
-                SVGPaint.DEFAULT_PAINT, 1,
+                AwtSVGPaint.DEFAULT_PAINT,
+                AwtSVGPaint.DEFAULT_PAINT, 1,
                 SVGPaint.NONE, 1, 1,
                 StrokeContext.createDefault());
     }

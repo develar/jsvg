@@ -85,7 +85,7 @@ public final class DefaultPaintParser implements PaintParser {
                         parseColorComponent(values[2], false, parser),
                         isRgba ? parseColorComponent(values[3], true, parser) : 255);
             }
-            return ColorLookup.colorMap().get(value.toLowerCase(Locale.ENGLISH));
+            return ColorLookup.colorMap.get(value.toLowerCase(Locale.ENGLISH));
         } catch (Exception e) {
             LOGGER.log(Level.INFO, e.getMessage(), e);
             return null;
@@ -142,13 +142,13 @@ public final class DefaultPaintParser implements PaintParser {
     }
 
     private static final class ColorLookup {
-        private static Map<String, Color> colorMap;
+        private static final Map<String, Color> colorMap = colorMap();
 
         private static Map<String, Color> colorMap() {
             if (colorMap != null) {
                 return colorMap;
             }
-            colorMap = new HashMap<>(143);
+            Map<String, Color> colorMap = new HashMap<>(143);
 
             colorMap.put("aliceblue", new Color(0xf0f8ff));
             colorMap.put("antiquewhite", new Color(0xfaebd7));

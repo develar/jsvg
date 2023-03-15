@@ -21,16 +21,14 @@
  */
 package com.github.weisj.jsvg.attributes.paint;
 
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-
+import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.github.weisj.jsvg.geometry.size.MeasureContext;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 public interface SVGPaint {
-    AwtSVGPaint DEFAULT_PAINT = new AwtSVGPaint(PaintParser.DEFAULT_COLOR);
     SVGPaint NONE = new SVGPaint() {
         @Override
         public void fillShape(@NotNull Graphics2D g, @NotNull MeasureContext measure, @NotNull Shape shape,
