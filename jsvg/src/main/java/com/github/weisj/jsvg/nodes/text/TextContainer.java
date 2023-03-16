@@ -159,7 +159,7 @@ abstract class TextContainer extends BaseContainerNode<TextSegment>
         }
     }
 
-    private static class IntermediateTextMetrics {
+    private static final class IntermediateTextMetrics {
         private double letterSpacingLength = 0;
         private double glyphLength = 0;
         private double fixedGlyphLength = 0;

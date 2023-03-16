@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.geometry.size.Length;
 
-public class SegmentIteratorWithLookBehind {
+public final class SegmentIteratorWithLookBehind {
 
     private final @NotNull PathIterator pathIterator;
     private float maxLookBehindLength;
@@ -151,7 +151,7 @@ public class SegmentIteratorWithLookBehind {
         }
     }
 
-    public static class Segment {
+    public static final class Segment {
         public float xStart;
         public float yStart;
         public float xEnd;

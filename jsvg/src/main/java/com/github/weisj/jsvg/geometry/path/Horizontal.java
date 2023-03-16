@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Mark McKay
  * @author <a href="mailto:mark@kitfox.com">Mark McKay</a>
  */
-class Horizontal extends PathCommand {
+final class Horizontal extends PathCommand {
 
     private final float x;
 

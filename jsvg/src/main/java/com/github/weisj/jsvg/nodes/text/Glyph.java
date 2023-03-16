@@ -25,7 +25,7 @@ import java.awt.*;
 
 import org.jetbrains.annotations.NotNull;
 
-public class Glyph {
+public final class Glyph {
     private final @NotNull Shape outline;
     private final float advance;
     private final char codepoint;

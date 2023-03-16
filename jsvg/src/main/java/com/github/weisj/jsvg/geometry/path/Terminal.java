@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Mark McKay
  * @author <a href="mailto:mark@kitfox.com">Mark McKay</a>
  */
-public class Terminal extends PathCommand {
+public final class Terminal extends PathCommand {
 
     Terminal() {
         super(1);

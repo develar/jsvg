@@ -23,7 +23,7 @@ package com.github.weisj.jsvg.geometry.mesh;
 
 import java.awt.geom.Point2D;
 
-public class CoonValues {
+public final class CoonValues {
     public final Point2D.Float north;
     public final Point2D.Float east;
     public final Point2D.Float south;

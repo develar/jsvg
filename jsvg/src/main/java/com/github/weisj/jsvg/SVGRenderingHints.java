@@ -34,7 +34,7 @@ public final class SVGRenderingHints {
     public static final Object VALUE_IMAGE_ANTIALIASING_ON = Value.ON;
     public static final Object VALUE_IMAGE_ANTIALIASING_OFF = Value.OFF;
 
-    private static class Key extends RenderingHints.Key {
+    private static final class Key extends RenderingHints.Key {
         /**
          * Construct a key using the indicated private key.  Each
          * subclass of Key maintains its own unique domain of integer

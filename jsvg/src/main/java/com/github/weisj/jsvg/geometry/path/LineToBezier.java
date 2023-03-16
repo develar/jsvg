@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.geometry.mesh.Bezier;
 
-class LineToBezier implements BezierPathCommand {
+final class LineToBezier implements BezierPathCommand {
 
     private final boolean relative;
     private final float x;

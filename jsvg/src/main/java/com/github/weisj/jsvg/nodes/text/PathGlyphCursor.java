@@ -31,7 +31,7 @@ import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.geometry.util.GeometryUtil;
 import com.github.weisj.jsvg.geometry.util.SegmentIteratorWithLookBehind;
 
-class PathGlyphCursor extends GlyphCursor {
+final class PathGlyphCursor extends GlyphCursor {
 
     private float remainingSegmentLength;
     private float segmentLength;

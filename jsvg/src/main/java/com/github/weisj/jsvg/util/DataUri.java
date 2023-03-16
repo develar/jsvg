@@ -119,7 +119,7 @@ final class DataUri {
         return result;
     }
 
-    private static class MalformedDataUriException extends IOException {
+    private static final class MalformedDataUriException extends IOException {
         private MalformedDataUriException(@NotNull String reason) {
             super(reason);
         }

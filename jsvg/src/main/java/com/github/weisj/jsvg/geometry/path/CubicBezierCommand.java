@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.geometry.mesh.Bezier;
 
-class CubicBezierCommand implements BezierPathCommand {
+final class CubicBezierCommand implements BezierPathCommand {
 
     private final boolean relative;
     private final float bx;

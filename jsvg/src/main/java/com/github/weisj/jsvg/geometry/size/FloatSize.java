@@ -24,7 +24,7 @@ package com.github.weisj.jsvg.geometry.size;
 import java.awt.geom.Dimension2D;
 import java.util.Objects;
 
-public class FloatSize extends Dimension2D {
+public final class FloatSize extends Dimension2D {
 
     public float width;
     public float height;

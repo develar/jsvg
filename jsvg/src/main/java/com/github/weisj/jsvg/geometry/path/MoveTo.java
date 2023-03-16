@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Mark McKay
  * @author <a href="mailto:mark@kitfox.com">Mark McKay</a>
  */
-class MoveTo extends PathCommand {
+final class MoveTo extends PathCommand {
     private final float x;
     private final float y;
 

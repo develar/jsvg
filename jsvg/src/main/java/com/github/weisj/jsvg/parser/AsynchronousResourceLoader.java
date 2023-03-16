@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import com.github.weisj.jsvg.util.ResourceUtil;
 
 
-public class AsynchronousResourceLoader implements ResourceLoader {
+public final class AsynchronousResourceLoader implements ResourceLoader {
     private static final Logger LOGGER = Logger.getLogger(AsynchronousResourceLoader.class.getName());
 
     @Override

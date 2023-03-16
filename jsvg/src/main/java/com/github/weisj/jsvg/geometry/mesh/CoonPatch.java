@@ -30,7 +30,7 @@ import java.awt.geom.Point2D;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CoonPatch {
+public final class CoonPatch {
     public Bezier north;
     public Bezier east;
     public Bezier south;

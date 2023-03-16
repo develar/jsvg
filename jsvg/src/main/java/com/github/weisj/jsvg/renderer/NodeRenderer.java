@@ -64,7 +64,7 @@ public final class NodeRenderer {
         }
     }
 
-    private static class InfoWithFilter extends Info {
+    private static final class InfoWithFilter extends Info {
         private final @NotNull Filter filter;
         private final @NotNull Filter.FilterInfo filterInfo;
 

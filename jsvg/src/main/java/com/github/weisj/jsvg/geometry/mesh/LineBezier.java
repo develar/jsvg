@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.geometry.util.GeometryUtil;
 
-class LineBezier extends Bezier {
+final class LineBezier extends Bezier {
 
     LineBezier(@NotNull Point2D.Float a, @NotNull Point2D.Float b) {
         super(a, lerp(1 / 3f, b, a), lerp(2 / 3f, b, a), b);

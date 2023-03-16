@@ -35,7 +35,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
-public class SVGDocument {
+public final class SVGDocument {
     private static final boolean DEBUG = false;
     private final @NotNull SVG root;
 

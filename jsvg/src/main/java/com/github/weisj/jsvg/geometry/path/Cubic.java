@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Mark McKay
  * @author <a href="mailto:mark@kitfox.com">Mark McKay</a>
  */
-class Cubic extends PathCommand {
+final class Cubic extends PathCommand {
 
     private final float k1x;
     private final float k1y;

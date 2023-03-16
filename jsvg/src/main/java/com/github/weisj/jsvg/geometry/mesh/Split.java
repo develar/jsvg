@@ -23,7 +23,7 @@ package com.github.weisj.jsvg.geometry.mesh;
 
 import org.jetbrains.annotations.NotNull;
 
-class Split<T> {
+final class Split<T> {
     public final @NotNull T left;
     public final @NotNull T right;
 

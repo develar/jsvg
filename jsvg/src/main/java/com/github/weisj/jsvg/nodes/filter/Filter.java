@@ -146,7 +146,7 @@ public final class Filter extends ContainerNode {
         return node instanceof FilterPrimitive && super.acceptChild(id, node);
     }
 
-    public static class FilterInfo {
+    public static final class FilterInfo {
         public final @NotNull Rectangle2D imageBounds;
         public final int imageWidth;
         public final int imageHeight;
@@ -199,7 +199,7 @@ public final class Filter extends ContainerNode {
         }
     }
 
-    private static class AlphaImageFilter extends RGBImageFilter {
+    private static final class AlphaImageFilter extends RGBImageFilter {
         private final ColorModel model = ColorModel.getRGBdefault();
 
         @Override

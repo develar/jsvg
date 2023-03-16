@@ -62,7 +62,7 @@ public final class MaskedPaint implements Paint, GraphicsUtil.WrappingPaint {
         return Transparency.TRANSLUCENT;
     }
 
-    private static class MaskPaintContext implements PaintContext {
+    private static final class MaskPaintContext implements PaintContext {
         private final @NotNull PaintContext parentContext;
         private final @NotNull ColorModel colorModel;
         private final int numColorComponents;

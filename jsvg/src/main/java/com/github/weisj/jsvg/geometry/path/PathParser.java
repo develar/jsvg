@@ -34,7 +34,7 @@ import com.github.weisj.jsvg.geometry.size.Length;
  *
  * @author Jannis Weis
  */
-public class PathParser {
+public final class PathParser {
     private final String input;
     private final int inputLength;
     private int index;
@@ -259,7 +259,7 @@ public class PathParser {
         return commands.toArray(new PathCommand[0]);
     }
 
-    private static class NumberCharState {
+    private static final class NumberCharState {
         private int iteration = 0;
         private boolean dotAllowed = true;
         private boolean signAllowed = true;

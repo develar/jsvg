@@ -21,7 +21,7 @@
  */
 package com.github.weisj.jsvg.geometry.mesh;
 
-public class Subdivided<T> {
+public final class Subdivided<T> {
     public final T northWest;
     public final T northEast;
     public final T southWest;

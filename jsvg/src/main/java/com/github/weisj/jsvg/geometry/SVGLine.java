@@ -32,7 +32,7 @@ import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.geometry.util.GeometryUtil;
 import com.github.weisj.jsvg.renderer.RenderContext;
 
-public class SVGLine implements MeasurableShape {
+public final class SVGLine implements MeasurableShape {
 
     private final @NotNull Line2D.Float line = new Line2D.Float();
     private final Length x1;

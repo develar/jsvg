@@ -29,6 +29,7 @@ import com.github.weisj.jsvg.attributes.text.LengthAdjust;
 import com.google.errorprone.annotations.Immutable;
 
 @Immutable
+final
 class GlyphAdvancement {
     private final float spacingAdjustment;
     private final float absoluteSpacingAdjustment;

@@ -31,7 +31,7 @@ import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.renderer.RenderContext;
 
-public class SVGCircle implements MeasurableShape {
+public final class SVGCircle implements MeasurableShape {
 
     private final @NotNull Ellipse2D.Float circle = new Ellipse2D.Float();
     private final @NotNull Length cx;

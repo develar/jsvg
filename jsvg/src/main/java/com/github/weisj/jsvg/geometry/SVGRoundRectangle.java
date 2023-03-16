@@ -31,7 +31,7 @@ import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.renderer.RenderContext;
 
-public class SVGRoundRectangle implements MeasurableShape {
+public final class SVGRoundRectangle implements MeasurableShape {
 
     private final @NotNull RoundRectangle2D.Float rect = new RoundRectangle2D.Float();
     private final @NotNull Length x;

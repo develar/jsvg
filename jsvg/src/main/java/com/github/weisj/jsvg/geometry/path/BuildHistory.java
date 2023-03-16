@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Mark McKay
  * @author <a href="mailto:mark@kitfox.com">Mark McKay</a>
  */
-public class BuildHistory {
+public final class BuildHistory {
 
     final @NotNull Point2D.Float startPoint = new Point2D.Float();
     final @NotNull Point2D.Float lastPoint = new Point2D.Float();

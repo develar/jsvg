@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.renderer.RenderContext;
 
-public class FillRuleAwareAWTSVGShape extends AWTSVGShape<Path2D> {
+public final class FillRuleAwareAWTSVGShape extends AWTSVGShape<Path2D> {
 
     public FillRuleAwareAWTSVGShape(@NotNull Path2D shape) {
         super(shape);

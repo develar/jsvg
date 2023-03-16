@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.renderer.RenderContext;
 
-public class ImageProducerChannel implements Channel, PixelProvider {
+public final class ImageProducerChannel implements Channel, PixelProvider {
 
     private final @NotNull ImageProducer producer;
     private WritableRaster raster;

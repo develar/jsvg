@@ -33,7 +33,7 @@ import java.awt.geom.PathIterator;
  *  @author <a href="mailto:rammi@caff.de">Rammi</a>
  *  @version $Revision: 1.3 $
  */
-public class ReversePathIterator implements PathIterator {
+public final class ReversePathIterator implements PathIterator {
     /** The winding rule. */
     private final int windingRule;
     /** The reversed coordinates. */

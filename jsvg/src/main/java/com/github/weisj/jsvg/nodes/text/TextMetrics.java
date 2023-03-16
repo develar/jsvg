@@ -21,7 +21,7 @@
  */
 package com.github.weisj.jsvg.nodes.text;
 
-public class TextMetrics {
+public final class TextMetrics {
     private final double letterSpacingLength;
     private final double glyphLength;
     private final double fixedGlyphLength;

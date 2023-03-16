@@ -26,7 +26,7 @@ import java.awt.geom.Point2D;
 
 import org.jetbrains.annotations.NotNull;
 
-class QuadraticSmooth extends PathCommand {
+final class QuadraticSmooth extends PathCommand {
 
     private final float x;
     private final float y;

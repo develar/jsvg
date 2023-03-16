@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.github.weisj.jsvg.renderer.RenderContext;
 
-class StringTextSegment implements TextSegment {
+final class StringTextSegment implements TextSegment {
     private final char[] codepoints;
     private final TextContainer parent;
     private final int index;

@@ -33,7 +33,7 @@ import com.github.weisj.jsvg.util.ConstantProvider;
 import com.github.weisj.jsvg.util.LazyProvider;
 import com.github.weisj.jsvg.util.Provider;
 
-class FilterContext {
+final class FilterContext {
 
     private final @NotNull Map<@NotNull Object, @NotNull Provider<Channel>> resultChannels = new HashMap<>();
     private final Filter.FilterInfo info;

@@ -29,7 +29,7 @@ import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SwingUIFuture<T> implements UIFuture<T> {
+public final class SwingUIFuture<T> implements UIFuture<T> {
 
     private final @NotNull AtomicReference<SwingWorker<Void, Void>> swingWorker;
     private @Nullable T value;
