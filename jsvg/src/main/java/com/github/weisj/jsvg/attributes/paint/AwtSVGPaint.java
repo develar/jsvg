@@ -27,8 +27,6 @@ import java.awt.*;
 import java.util.Objects;
 
 public final class AwtSVGPaint implements SimplePaintSVGPaint {
-    public static final AwtSVGPaint DEFAULT_PAINT = new AwtSVGPaint(PaintParser.DEFAULT_COLOR);
-
     private final @NotNull Paint paint;
 
     public AwtSVGPaint(@NotNull Paint paint) {

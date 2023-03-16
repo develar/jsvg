@@ -21,13 +21,6 @@
  */
 package com.github.weisj.jsvg.renderer;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.FillRule;
 import com.github.weisj.jsvg.attributes.ViewBox;
 import com.github.weisj.jsvg.attributes.font.MeasurableFontSpec;
@@ -38,6 +31,12 @@ import com.github.weisj.jsvg.nodes.Mask;
 import com.github.weisj.jsvg.nodes.SVGNode;
 import com.github.weisj.jsvg.nodes.filter.Filter;
 import com.github.weisj.jsvg.nodes.prototype.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 public final class NodeRenderer {
     private static final boolean CLIP_DEBUG = false;
@@ -102,8 +101,7 @@ public final class NodeRenderer {
 
     public static @Nullable Info createRenderInfo(@NotNull SVGNode node, @NotNull RenderContext context,
             @NotNull Graphics2D g, @Nullable Instantiator instantiator) {
-        if (!(node instanceof Renderable)) return null;
-        Renderable renderable = (Renderable) node;
+        if (!(node instanceof Renderable renderable)) return null;
         boolean instantiated = renderable.requiresInstantiation();
         if (instantiated && (instantiator == null || !instantiator.canInstantiate(node))) {
             return null;
@@ -207,10 +205,10 @@ public final class NodeRenderer {
                     context.targetComponent(),
                     new AffineTransform(),
                     new AffineTransform(),
-                    PaintContext.createDefault(),
+                    RenderContextDefaults.DEFAULT_CONTEXT,
                     newMeasure,
-                    FontRenderContext.createDefault(),
-                    MeasurableFontSpec.createDefault(),
+                    RenderContextDefaults.FONT_RENDER_CONTEXT,
+                    RenderContextDefaults.FONT_SPEC,
                     context.fillRule(),
                     context.contextElementAttributes());
         }

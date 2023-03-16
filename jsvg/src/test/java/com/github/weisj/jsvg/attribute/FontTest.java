@@ -21,19 +21,22 @@
  */
 package com.github.weisj.jsvg.attribute;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-
+import com.github.weisj.jsvg.attributes.font.FontParser;
+import com.github.weisj.jsvg.attributes.font.FontResolver;
+import com.github.weisj.jsvg.attributes.font.MeasurableFontSpec;
+import com.github.weisj.jsvg.attributes.font.SVGFont;
+import com.github.weisj.jsvg.geometry.size.FloatSize;
+import com.github.weisj.jsvg.geometry.size.MeasureContext;
+import com.github.weisj.jsvg.parser.ParserTestUtil;
+import com.github.weisj.jsvg.renderer.RenderContextDefaults;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.github.weisj.jsvg.attributes.font.*;
-import com.github.weisj.jsvg.geometry.size.FloatSize;
-import com.github.weisj.jsvg.geometry.size.MeasureContext;
-import com.github.weisj.jsvg.parser.ParserTestUtil;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 class FontTest {
 
@@ -65,12 +68,12 @@ class FontTest {
         Assertions.assertEquals(3 * MEASURE_CONTEXT.em(), font.size());
     }
 
-    private static @NotNull MeasurableFontSpec createFontSpec(@NotNull AttributeEntry... attributes) {
+    private static @NotNull MeasurableFontSpec createFontSpec(AttributeEntry @NotNull... attributes) {
         Map<String, String> attrs = new HashMap<>();
         for (AttributeEntry attribute : attributes) {
             attrs.put(attribute.key, attribute.value);
         }
-        return MeasurableFontSpec.createDefault().derive(FontParser.parseFontSpec(
+        return RenderContextDefaults.FONT_SPEC.derive(FontParser.parseFontSpec(
                 ParserTestUtil.createDummyAttributeNode(attrs)));
     }
 

@@ -32,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 public final class PaintContext implements Mutator<PaintContext> {
-
     public final @Nullable AwtSVGPaint color;
     public final @Nullable SVGPaint fillPaint;
     public final @Nullable SVGPaint strokePaint;
@@ -54,14 +53,6 @@ public final class PaintContext implements Mutator<PaintContext> {
         this.opacity = opacity;
         // Avoid creating unnecessary intermediate contexts during painting.
         this.strokeContext = strokeContext == null || strokeContext.isTrivial() ? null : strokeContext;
-    }
-
-    public static @NotNull PaintContext createDefault() {
-        return new PaintContext(
-                AwtSVGPaint.DEFAULT_PAINT,
-                AwtSVGPaint.DEFAULT_PAINT, 1,
-                SVGPaint.NONE, 1, 1,
-                StrokeContext.createDefault());
     }
 
     public static @NotNull PaintContext parse(@NotNull AttributeNode attributeNode) {

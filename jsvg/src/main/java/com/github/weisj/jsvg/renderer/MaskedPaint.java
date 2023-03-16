@@ -21,16 +21,16 @@
  */
 package com.github.weisj.jsvg.renderer;
 
-import java.awt.*;
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.PaintContext;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 
-import org.jetbrains.annotations.NotNull;
-
-public class MaskedPaint implements Paint, GraphicsUtil.WrappingPaint {
+public final class MaskedPaint implements Paint, GraphicsUtil.WrappingPaint {
     private @NotNull Paint paint;
     private final @NotNull Raster maskRaster;
     private final @NotNull Point maskOffset;

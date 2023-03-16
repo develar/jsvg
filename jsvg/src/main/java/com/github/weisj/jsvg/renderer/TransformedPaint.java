@@ -21,15 +21,15 @@
  */
 package com.github.weisj.jsvg.renderer;
 
-import java.awt.*;
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.PaintContext;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ColorModel;
 
-import org.jetbrains.annotations.NotNull;
-
-public class TransformedPaint implements Paint {
+public final class TransformedPaint implements Paint {
     private final @NotNull Paint paint;
     private final @NotNull AffineTransform transform;
 

@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.registering
 
 open class ModuleInfoExtension {
-    var version: JavaVersion = JavaVersion.VERSION_1_9
+    var version: JavaVersion = JavaVersion.VERSION_17
     var extraArgs: List<String> = emptyList()
 }
 

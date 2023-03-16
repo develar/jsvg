@@ -21,11 +21,6 @@
  */
 package com.github.weisj.jsvg.renderer;
 
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.text.DominantBaseline;
 import com.github.weisj.jsvg.attributes.text.TextAnchor;
 import com.github.weisj.jsvg.geometry.size.Length;
@@ -33,9 +28,13 @@ import com.github.weisj.jsvg.nodes.text.TextPath;
 import com.github.weisj.jsvg.nodes.text.TextSpan;
 import com.github.weisj.jsvg.parser.AttributeNode;
 import com.google.errorprone.annotations.Immutable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 @Immutable
-public class FontRenderContext {
+public final class FontRenderContext {
     // Note: An unspecified value is different from 0.
     // Unlike 0 it allows us to use spacing different from 0 if needed.
     private final @Nullable Length letterSpacing;
@@ -64,8 +63,7 @@ public class FontRenderContext {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FontRenderContext)) return false;
-        FontRenderContext that = (FontRenderContext) o;
+        if (!(o instanceof FontRenderContext that)) return false;
         return Objects.equals(letterSpacing, that.letterSpacing)
                 && dominantBaseline == that.dominantBaseline
                 && textAnchor == that.textAnchor;
@@ -74,10 +72,6 @@ public class FontRenderContext {
     @Override
     public int hashCode() {
         return Objects.hash(letterSpacing, dominantBaseline, textAnchor);
-    }
-
-    public static @NotNull FontRenderContext createDefault() {
-        return new FontRenderContext(null, null, null);
     }
 
     public static @NotNull FontRenderContext parse(@NotNull AttributeNode attributeNode) {

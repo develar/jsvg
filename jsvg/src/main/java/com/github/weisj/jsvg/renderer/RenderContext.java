@@ -27,7 +27,6 @@ import com.github.weisj.jsvg.attributes.ViewBox;
 import com.github.weisj.jsvg.attributes.font.FontResolver;
 import com.github.weisj.jsvg.attributes.font.MeasurableFontSpec;
 import com.github.weisj.jsvg.attributes.font.SVGFont;
-import com.github.weisj.jsvg.attributes.paint.AwtSVGPaint;
 import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.attributes.stroke.StrokeResolver;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
@@ -56,16 +55,15 @@ public final class RenderContext {
     private final @NotNull AffineTransform rootTransform;
     private final @NotNull AffineTransform userSpaceTransform;
 
-
     public static @NotNull RenderContext createInitial(@Nullable JComponent targetComponent,
             @NotNull MeasureContext measureContext) {
         return new RenderContext(targetComponent,
                 new AffineTransform(),
                 new AffineTransform(),
-                PaintContext.createDefault(),
+                RenderContextDefaults.DEFAULT_CONTEXT,
                 measureContext,
-                FontRenderContext.createDefault(),
-                MeasurableFontSpec.createDefault(),
+                RenderContextDefaults.FONT_RENDER_CONTEXT,
+                RenderContextDefaults.FONT_SPEC,
                 FillRule.Nonzero,
                 null);
     }
@@ -161,7 +159,7 @@ public final class RenderContext {
     }
 
     private @NotNull SVGPaint resolvePaint(@Nullable SVGPaint p) {
-        if (p == AwtSVGPaint.DEFAULT_PAINT || p == SVGPaint.CURRENT_COLOR) {
+        if (p == RenderContextDefaults.DEFAULT_PAINT || p == SVGPaint.CURRENT_COLOR) {
             // color can only hold resolved values being declared as literals
             return coerceNonNull(paintContext.color);
         }
@@ -179,7 +177,7 @@ public final class RenderContext {
     }
 
     private static @NotNull SVGPaint coerceNonNull(@Nullable SVGPaint p) {
-        return p != null ? p : AwtSVGPaint.DEFAULT_PAINT;
+        return p != null ? p : RenderContextDefaults.DEFAULT_PAINT;
     }
 
     public @Percentage float rawOpacity() {

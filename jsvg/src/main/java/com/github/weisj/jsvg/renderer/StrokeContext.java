@@ -21,18 +21,17 @@
  */
 package com.github.weisj.jsvg.renderer;
 
-import java.util.Arrays;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.stroke.LineCap;
 import com.github.weisj.jsvg.attributes.stroke.LineJoin;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.Unit;
 import com.github.weisj.jsvg.parser.AttributeNode;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class StrokeContext {
+import java.util.Arrays;
+
+public final class StrokeContext {
     public final @Nullable Length strokeWidth;
     public final @Nullable LineCap lineCap;
     public final @Nullable LineJoin lineJoin;
@@ -42,7 +41,7 @@ public class StrokeContext {
     public final @Nullable Length dashOffset;
 
     public StrokeContext(@Nullable Length strokeWidth, @Nullable LineCap lineCap, @Nullable LineJoin lineJoin,
-            float miterLimit, @NotNull Length[] dashPattern, @Nullable Length dashOffset) {
+            float miterLimit, Length @NotNull [] dashPattern, @Nullable Length dashOffset) {
         this.strokeWidth = strokeWidth;
         this.lineCap = lineCap;
         this.lineJoin = lineJoin;
@@ -51,7 +50,7 @@ public class StrokeContext {
         this.dashOffset = dashOffset;
     }
 
-    private static Length[] validateDashPattern(@NotNull Length[] pattern) {
+    private static Length[] validateDashPattern(Length @NotNull [] pattern) {
         if (pattern.length == 0) return pattern;
         for (Length length : pattern) {
             if (length.raw() < 0) {

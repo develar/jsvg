@@ -21,25 +21,24 @@
  */
 package com.github.weisj.jsvg.attributes.font;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.Percentage;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.geometry.size.Unit;
 import com.google.errorprone.annotations.Immutable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 @Immutable
-public class MeasurableFontSpec extends FontSpec {
+public final class MeasurableFontSpec extends FontSpec {
     public static final @NotNull String DEFAULT_FONT_FAMILY_NAME = "Default";
     private final int currentWeight;
     private final @NotNull Length currentSize;
 
-    MeasurableFontSpec(@NotNull String[] families, @Nullable FontStyle style, @Nullable Length sizeAdjust,
+    MeasurableFontSpec(String @NotNull [] families, @Nullable FontStyle style, @Nullable Length sizeAdjust,
             float stretch, int currentWeight, @NotNull Length currentSize) {
         super(families, style, sizeAdjust, stretch);
         this.currentWeight = currentWeight;
@@ -56,7 +55,7 @@ public class MeasurableFontSpec extends FontSpec {
                 Unit.Raw.valueOf(SVGFont.defaultFontSize()));
     }
 
-    public @NotNull String[] families() {
+    public String @NotNull [] families() {
         return families;
     }
 
@@ -129,9 +128,8 @@ public class MeasurableFontSpec extends FontSpec {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MeasurableFontSpec)) return false;
+        if (!(o instanceof MeasurableFontSpec fontSpec)) return false;
         if (!super.equals(o)) return false;
-        MeasurableFontSpec fontSpec = (MeasurableFontSpec) o;
         return currentWeight == fontSpec.currentWeight && currentSize.equals(fontSpec.currentSize);
     }
 

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import com.github.weisj.jsvg.attributes.paint.DefaultPaintParser;
 import com.github.weisj.jsvg.attributes.paint.PaintParser;
 
-public class DefaultParserProvider implements ParserProvider {
+public final class DefaultParserProvider implements ParserProvider {
     @Override
     public @NotNull PaintParser createPaintParser() {
         return new DefaultPaintParser();

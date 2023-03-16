@@ -21,17 +21,16 @@
  */
 package com.github.weisj.jsvg.renderer;
 
-import java.util.Objects;
-
+import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import org.jetbrains.annotations.NotNull;
 
-import com.github.weisj.jsvg.attributes.paint.SVGPaint;
+import java.util.Objects;
 
 /**
  * Holds values provided by the current context element.
  * Note that values here must always be absolute and can't refer themselves to any context element values.
  */
-public class ContextElementAttributes {
+public final class ContextElementAttributes {
     public final @NotNull SVGPaint fillPaint;
     public final @NotNull SVGPaint strokePaint;
 
@@ -43,8 +42,7 @@ public class ContextElementAttributes {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ContextElementAttributes)) return false;
-        ContextElementAttributes that = (ContextElementAttributes) o;
+        if (!(o instanceof ContextElementAttributes that)) return false;
         return fillPaint.equals(that.fillPaint) && strokePaint.equals(that.strokePaint);
     }
 

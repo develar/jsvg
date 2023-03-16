@@ -49,7 +49,7 @@ import java.util.zip.GZIPInputStream;
 public final class SVGLoader {
 
     static final Logger LOGGER = Logger.getLogger(SVGLoader.class.getName());
-    private static final @NotNull Map<String, Supplier<SVGNode>> NODE_CONSTRUCTOR_MAP = NodeMap.createNodeConstructorMap(new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
+    private static final @NotNull Map<String, Supplier<SVGNode>> NODE_CONSTRUCTOR_MAP = NodeMapKt.createNodeConstructorMap(new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
 
     private final @NotNull SAXParser saxParser;
 

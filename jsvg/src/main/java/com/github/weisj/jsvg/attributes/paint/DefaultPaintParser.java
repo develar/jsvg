@@ -145,11 +145,7 @@ public final class DefaultPaintParser implements PaintParser {
         private static final Map<String, Color> colorMap = colorMap();
 
         private static Map<String, Color> colorMap() {
-            if (colorMap != null) {
-                return colorMap;
-            }
             Map<String, Color> colorMap = new HashMap<>(143);
-
             colorMap.put("aliceblue", new Color(0xf0f8ff));
             colorMap.put("antiquewhite", new Color(0xfaebd7));
             colorMap.put("aqua", new Color(0x00ffff));
@@ -299,8 +295,7 @@ public final class DefaultPaintParser implements PaintParser {
             colorMap.put("whitesmoke", new Color(0xf5f5f5));
             colorMap.put("yellow", new Color(0xffff00));
             colorMap.put("yellowgreen", new Color(0x9acd32));
-            colorMap = Map.copyOf(colorMap);
-            return colorMap;
+            return Map.copyOf(colorMap);
         }
     }
 }
