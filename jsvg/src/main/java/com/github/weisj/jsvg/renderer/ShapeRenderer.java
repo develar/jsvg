@@ -53,7 +53,7 @@ public final class ShapeRenderer {
             this.opacity = opacity;
         }
 
-        boolean isVisible() {
+        private boolean isVisible() {
             return opacity > 0 && paint.isVisible();
         }
     }
@@ -259,9 +259,9 @@ public final class ShapeRenderer {
                 x, y, dxIn, dyIn, 0, 0);
     }
 
-    public static void paintSingleMarker(@NotNull ShapeNode shapeNode, @NotNull RenderContext context,
-            @NotNull Graphics2D g, @Nullable MarkerOrientation.MarkerType type, @Nullable Marker marker,
-            float x, float y, float dxIn, float dyIn, float dxOut, float dyOut) {
+    private static void paintSingleMarker(@NotNull ShapeNode shapeNode, @NotNull RenderContext context,
+                                          @NotNull Graphics2D g, @Nullable MarkerOrientation.MarkerType type, @Nullable Marker marker,
+                                          float x, float y, float dxIn, float dyIn, float dxOut, float dyOut) {
         if (marker == null) return;
         assert type != null;
 

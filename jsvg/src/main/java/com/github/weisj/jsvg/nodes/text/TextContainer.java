@@ -56,9 +56,9 @@ abstract class TextContainer extends BaseContainerNode<TextSegment>
     private final List<@NotNull TextSegment> segments = new ArrayList<>();
 
     private PaintOrder paintOrder;
-    protected AttributeFontSpec fontSpec;
-    protected LengthAdjust lengthAdjust;
-    protected Length textLength;
+    private AttributeFontSpec fontSpec;
+    private LengthAdjust lengthAdjust;
+    private Length textLength;
 
     private boolean isVisible;
     private HasContext context;
@@ -119,8 +119,8 @@ abstract class TextContainer extends BaseContainerNode<TextSegment>
     // position.
     protected abstract void cleanUpLocalCursor(@NotNull GlyphCursor current, @NotNull GlyphCursor local);
 
-    protected final void renderSegment(@NotNull GlyphCursor cursor, @NotNull RenderContext context,
-            @NotNull Graphics2D g) {
+    final void renderSegment(@NotNull GlyphCursor cursor, @NotNull RenderContext context,
+                             @NotNull Graphics2D g) {
         prepareSegmentForRendering(cursor, context);
 
         double offset = textAnchorOffset(context.fontRenderContext().textAnchor(), cursor);
@@ -160,12 +160,12 @@ abstract class TextContainer extends BaseContainerNode<TextSegment>
     }
 
     private static class IntermediateTextMetrics {
-        double letterSpacingLength = 0;
-        double glyphLength = 0;
-        double fixedGlyphLength = 0;
+        private double letterSpacingLength = 0;
+        private double glyphLength = 0;
+        private double fixedGlyphLength = 0;
 
-        int glyphCount = 0;
-        int controllableLetterSpacingCount = 0;
+        private int glyphCount = 0;
+        private int controllableLetterSpacingCount = 0;
     }
 
     @Override

@@ -87,7 +87,7 @@ public final class FeDisplacementMap extends FilterPrimitive {
         private final @NotNull PixelProvider displacementChannel;
         private final Rectangle2D sourceBounds;
 
-        public DisplacementOp(@NotNull PixelProvider displacementChannel, Rectangle2D sourceBounds) {
+        private DisplacementOp(@NotNull PixelProvider displacementChannel, Rectangle2D sourceBounds) {
             this.displacementChannel = displacementChannel;
             this.sourceBounds = sourceBounds;
         }

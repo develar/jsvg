@@ -24,7 +24,7 @@ package com.github.weisj.jsvg.attributes.font;
 import com.google.errorprone.annotations.Immutable;
 
 @Immutable
-public enum PredefinedFontWeight implements FontWeight {
+enum PredefinedFontWeight implements FontWeight {
     Normal {
         @Override
         public int weight(int parentWeight) {

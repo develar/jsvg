@@ -58,7 +58,7 @@ public class ReversePathIterator implements PathIterator {
      *  @param original original iterator
      *  @param windingRule winding rule of newly created iterator
      */
-    public ReversePathIterator(PathIterator original, int windingRule) {
+    private ReversePathIterator(PathIterator original, int windingRule) {
         this.windingRule = windingRule;
 
         double[] coords = new double[16];

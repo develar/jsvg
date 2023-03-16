@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.attributes.HasMatchName;
 
-public enum FontStretch implements HasMatchName {
+enum FontStretch implements HasMatchName {
     Normal(1f),
     UltraCondensed(0.5f, "ultra-condensed"),
     ExtraCondensed(0.625f, "extra-condensed"),

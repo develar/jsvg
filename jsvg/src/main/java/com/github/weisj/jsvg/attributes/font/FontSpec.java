@@ -21,27 +21,26 @@
  */
 package com.github.weisj.jsvg.attributes.font;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.Percentage;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.google.errorprone.annotations.Immutable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Objects;
 
 @Immutable
 // Can only be constructed by internal code upholding that the families array isn't modified.
 @SuppressWarnings("Immutable")
-public class FontSpec {
-    protected final @NotNull String[] families;
-    protected final @Nullable FontStyle style;
-    protected final @Nullable Length sizeAdjust;
-    protected final @Percentage float stretch;
+class FontSpec {
+    final @NotNull List<String> families;
+    final @Nullable FontStyle style;
+    final @Nullable Length sizeAdjust;
+    final @Percentage float stretch;
 
-    FontSpec(@NotNull String[] families, @Nullable FontStyle style, @Nullable Length sizeAdjust,
-            @Percentage float stretch) {
+    FontSpec(@NotNull List<String> families, @Nullable FontStyle style, @Nullable Length sizeAdjust,
+             @Percentage float stretch) {
         this.families = families;
         this.style = style;
         this.sizeAdjust = sizeAdjust;
@@ -51,7 +50,7 @@ public class FontSpec {
     @Override
     public String toString() {
         return "FontSpec{" +
-                "families=" + Arrays.toString(families) +
+                "families=" + families +
                 ", style=" + style +
                 ", sizeAdjust=" + sizeAdjust +
                 ", stretch=" + stretch +
@@ -61,10 +60,9 @@ public class FontSpec {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FontSpec)) return false;
-        FontSpec fontSpec = (FontSpec) o;
+        if (!(o instanceof FontSpec fontSpec)) return false;
         return Float.compare(fontSpec.stretch, stretch) == 0
-                && Arrays.equals(families, fontSpec.families)
+                && families.equals(fontSpec.families)
                 && Objects.equals(style, fontSpec.style)
                 && Objects.equals(sizeAdjust, fontSpec.sizeAdjust);
     }
@@ -72,7 +70,7 @@ public class FontSpec {
     @Override
     public int hashCode() {
         int result = Objects.hash(style, sizeAdjust, stretch);
-        result = 31 * result + Arrays.hashCode(families);
+        result = 31 * result + families.hashCode();
         return result;
     }
 }

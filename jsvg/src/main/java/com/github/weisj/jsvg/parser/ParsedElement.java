@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public final class ParsedElement {
 
@@ -114,6 +115,6 @@ public final class ParsedElement {
     }
 
     private void warnAboutCyclicDependency() {
-        SVGLoader.LOGGER.warning("Cyclic dependency involving node " + id + " detected.");
+        Logger.getLogger(ParsedElement.class.getName()).warning("Cyclic dependency involving node " + id + " detected.");
     }
 }

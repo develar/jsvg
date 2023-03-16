@@ -21,11 +21,6 @@
  */
 package com.github.weisj.jsvg.nodes.filter;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.github.weisj.jsvg.attributes.paint.AwtSVGPaint;
 import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
@@ -33,12 +28,16 @@ import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
 import com.github.weisj.jsvg.parser.AttributeNode;
 import com.github.weisj.jsvg.renderer.RenderContext;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 @ElementCategories(Category.FilterPrimitive)
 @PermittedContent(
     anyOf = { /* <animate>, <set> */ }
 )
-public class FeFlood extends FilterPrimitive {
+public final class FeFlood extends FilterPrimitive {
     public static final String TAG = "feflood";
 
     private SVGPaint floodColor;

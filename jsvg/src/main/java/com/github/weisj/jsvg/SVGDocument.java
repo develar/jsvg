@@ -52,7 +52,7 @@ public class SVGDocument {
         render(component, g, null);
     }
 
-    public void render(@Nullable JComponent component, @NotNull Graphics2D graphics2D, @Nullable ViewBox bounds) {
+    private void render(@Nullable JComponent component, @NotNull Graphics2D graphics2D, @Nullable ViewBox bounds) {
         Graphics2D g = (Graphics2D) graphics2D.create();
         setupSVGRenderingHints(g);
 

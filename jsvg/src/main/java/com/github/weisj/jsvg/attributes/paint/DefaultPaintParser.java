@@ -28,14 +28,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class DefaultPaintParser implements PaintParser {
-    private static final Logger LOGGER = Logger.getLogger(DefaultPaintParser.class.getName());
-
     // Todo: Handle hsl(), hsla() per the SVG 2.0 spec requirement
     @Override
     public @Nullable Color parseColor(@NotNull String value, @NotNull AttributeNode node) {
@@ -75,19 +74,19 @@ public final class DefaultPaintParser implements PaintParser {
             } else if (value.length() > 3 && value.substring(0, 3).equalsIgnoreCase("rgb")) {
                 boolean isRgba = value.length() > 4 && (value.charAt(3) == 'a' || value.charAt(3) == 'A');
                 int startIndex = isRgba ? 5 : 4;
-                String[] values = node.parser().parseStringList(
+                List<String> values = node.parser().parseStringList(
                         value.substring(startIndex, value.length() - 1), false);
-                isRgba = isRgba && values.length >= 4;
+                isRgba = isRgba && values.size() >= 4;
                 AttributeParser parser = node.parser();
                 return new Color(
-                        parseColorComponent(values[0], false, parser),
-                        parseColorComponent(values[1], false, parser),
-                        parseColorComponent(values[2], false, parser),
-                        isRgba ? parseColorComponent(values[3], true, parser) : 255);
+                        parseColorComponent(values.get(0), false, parser),
+                        parseColorComponent(values.get(1), false, parser),
+                        parseColorComponent(values.get(2), false, parser),
+                        isRgba ? parseColorComponent(values.get(3), true, parser) : 255);
             }
             return ColorLookup.colorMap.get(value.toLowerCase(Locale.ENGLISH));
         } catch (Exception e) {
-            LOGGER.log(Level.INFO, e.getMessage(), e);
+            Logger.getLogger(DefaultPaintParser.class.getName()).log(Level.INFO, e.getMessage(), e);
             return null;
         }
     }

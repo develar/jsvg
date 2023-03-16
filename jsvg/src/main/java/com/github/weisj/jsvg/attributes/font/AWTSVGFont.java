@@ -21,6 +21,11 @@
  */
 package com.github.weisj.jsvg.attributes.font;
 
+import com.github.weisj.jsvg.geometry.size.Length;
+import com.github.weisj.jsvg.nodes.text.Glyph;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphMetrics;
@@ -28,13 +33,7 @@ import java.awt.font.GlyphVector;
 import java.awt.font.LineMetrics;
 import java.util.HashMap;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.github.weisj.jsvg.geometry.size.Length;
-import com.github.weisj.jsvg.nodes.text.Glyph;
-
-public class AWTSVGFont implements SVGFont {
+final class AWTSVGFont implements SVGFont {
     private final @NotNull Font font;
     private final FontRenderContext frc = new FontRenderContext(null, true, true);
     private final HashMap<Character, Glyph> glyphCache;
@@ -44,7 +43,7 @@ public class AWTSVGFont implements SVGFont {
     private float exHeight = Length.UNSPECIFIED_RAW;
     private float mathBaseline = Length.UNSPECIFIED_RAW;
 
-    public AWTSVGFont(@NotNull Font font) {
+    AWTSVGFont(@NotNull Font font) {
         this.font = font;
         this.glyphCache = new HashMap<>();
     }

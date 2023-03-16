@@ -157,7 +157,7 @@ public class SegmentIteratorWithLookBehind {
         public float xEnd;
         public float yEnd;
 
-        public boolean moveHappened;
+        private boolean moveHappened;
 
         private Segment(float xStart, float yStart, float xEnd, float yEnd) {
             this.xStart = xStart;

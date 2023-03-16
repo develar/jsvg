@@ -48,16 +48,16 @@ import java.util.zip.GZIPInputStream;
  */
 public final class SVGLoader {
 
-    static final Logger LOGGER = Logger.getLogger(SVGLoader.class.getName());
-    private static final @NotNull Map<String, Supplier<SVGNode>> NODE_CONSTRUCTOR_MAP = NodeMapKt.createNodeConstructorMap(new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
+    private static final Logger LOGGER = Logger.getLogger(SVGLoader.class.getName());
+    private static final @NotNull Map<String, Supplier<SVGNode>> NODE_CONSTRUCTOR_MAP = NodeMap.createNodeConstructorMap(new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
 
     private final @NotNull SAXParser saxParser;
 
-    public SVGLoader() {
+    private SVGLoader() {
         this(createSaxParser());
     }
 
-    public SVGLoader(@NotNull SAXParser saxParser) {
+    private SVGLoader(@NotNull SAXParser saxParser) {
         this.saxParser = saxParser;
     }
 
@@ -87,7 +87,8 @@ public final class SVGLoader {
     }
 
 
-    public @Nullable SVGDocument load(@NotNull URL xmlBase, @NotNull ParserProvider parserProvider) {
+    @Nullable
+    private SVGDocument load(@NotNull URL xmlBase, @NotNull ParserProvider parserProvider) {
         try {
             return load(xmlBase.openStream(), parserProvider);
         } catch (IOException e) {
@@ -100,14 +101,16 @@ public final class SVGLoader {
         return load(inputStream, new DefaultParserProvider());
     }
 
-    public @Nullable SVGDocument load(@NotNull InputStream inputStream, @NotNull ParserProvider parserProvider) {
+    @Nullable
+    private SVGDocument load(@NotNull InputStream inputStream, @NotNull ParserProvider parserProvider) {
         return load(inputStream, parserProvider, new SynchronousResourceLoader());
     }
 
 
-    public @Nullable SVGDocument load(@NotNull InputStream inputStream,
-            @NotNull ParserProvider parserProvider,
-            @NotNull ResourceLoader resourceLoader) {
+    @Nullable
+    private SVGDocument load(@NotNull InputStream inputStream,
+                             @NotNull ParserProvider parserProvider,
+                             @NotNull ResourceLoader resourceLoader) {
         try {
             XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setEntityResolver(
@@ -274,7 +277,7 @@ public final class SVGLoader {
         }
 
         @NotNull
-        SVGDocument getDocument() {
+        private SVGDocument getDocument() {
             DomProcessor preProcessor = parserProvider.createPreProcessor();
             if (preProcessor != null) preProcessor.process(rootNode);
             rootNode.build();

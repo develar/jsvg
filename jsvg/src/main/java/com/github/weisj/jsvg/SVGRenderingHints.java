@@ -46,7 +46,7 @@ public final class SVGRenderingHints {
          *
          * @param privateKey the specified key
          */
-        protected Key(int privateKey) {
+        private Key(int privateKey) {
             super(privateKey);
         }
 

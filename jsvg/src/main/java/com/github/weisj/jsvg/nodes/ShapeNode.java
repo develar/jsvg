@@ -151,7 +151,7 @@ public abstract class ShapeNode extends RenderableSVGNode
                         shouldPaintStartEndMarkersInMiddle()));
     }
 
-    protected boolean shouldPaintStartEndMarkersInMiddle() {
+    boolean shouldPaintStartEndMarkersInMiddle() {
         return true;
     }
 }

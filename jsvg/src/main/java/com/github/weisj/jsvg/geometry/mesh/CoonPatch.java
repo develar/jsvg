@@ -38,7 +38,7 @@ public class CoonPatch {
 
     public final @NotNull CoonValues coonValues;
 
-    CoonPatch(Bezier north, Bezier east, Bezier south, Bezier west) {
+    private CoonPatch(Bezier north, Bezier east, Bezier south, Bezier west) {
         this(north, east, south, west,
                 new CoonValues(p(0, 0), p(1, 0), p(1, 1), p(0, 1)));
     }
@@ -47,7 +47,7 @@ public class CoonPatch {
         return new CoonPatch(null, null, null, null);
     }
 
-    CoonPatch(Bezier north, Bezier east, Bezier south, Bezier west, @NotNull CoonValues coonValues) {
+    private CoonPatch(Bezier north, Bezier east, Bezier south, Bezier west, @NotNull CoonValues coonValues) {
         this.north = north;
         this.east = east;
         this.south = south;

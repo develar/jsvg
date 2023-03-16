@@ -31,16 +31,16 @@ public abstract class PathCommand {
     private final boolean isRelative;
     private final int nodeCount;
 
-    protected PathCommand(int nodeCount) {
+    PathCommand(int nodeCount) {
         this(false, nodeCount);
     }
 
-    protected PathCommand(boolean isRelative, int nodeCount) {
+    PathCommand(boolean isRelative, int nodeCount) {
         this.isRelative = isRelative;
         this.nodeCount = nodeCount;
     }
 
-    protected Point2D.Float offset(@NotNull BuildHistory hist) {
+    Point2D.Float offset(@NotNull BuildHistory hist) {
         if (isRelative()) {
             return new Point2D.Float(hist.lastPoint.x, hist.lastPoint.y);
         } else {
@@ -48,7 +48,7 @@ public abstract class PathCommand {
         }
     }
 
-    protected Point2D.Float lastKnotReflection(@NotNull BuildHistory hist) {
+    Point2D.Float lastKnotReflection(@NotNull BuildHistory hist) {
         float oldKx = hist.lastKnot.x;
         float oldKy = hist.lastKnot.y;
         float oldX = hist.lastPoint.x;
@@ -60,7 +60,7 @@ public abstract class PathCommand {
         return new Point2D.Float(kx, ky);
     }
 
-    public boolean isRelative() {
+    boolean isRelative() {
         return isRelative;
     }
 

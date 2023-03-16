@@ -29,7 +29,8 @@ import com.google.errorprone.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 @Immutable
@@ -38,8 +39,8 @@ public final class MeasurableFontSpec extends FontSpec {
     private final int currentWeight;
     private final @NotNull Length currentSize;
 
-    MeasurableFontSpec(String @NotNull [] families, @Nullable FontStyle style, @Nullable Length sizeAdjust,
-            float stretch, int currentWeight, @NotNull Length currentSize) {
+    private MeasurableFontSpec(@NotNull List<String> families, @Nullable FontStyle style, @Nullable Length sizeAdjust,
+                               float stretch, int currentWeight, @NotNull Length currentSize) {
         super(families, style, sizeAdjust, stretch);
         this.currentWeight = currentWeight;
         this.currentSize = currentSize;
@@ -47,7 +48,7 @@ public final class MeasurableFontSpec extends FontSpec {
 
     public static @NotNull MeasurableFontSpec createDefault() {
         return new MeasurableFontSpec(
-                new String[] {DEFAULT_FONT_FAMILY_NAME},
+                Collections.singletonList(DEFAULT_FONT_FAMILY_NAME),
                 FontStyle.normal(),
                 null,
                 FontStretch.Normal.percentage(),
@@ -55,7 +56,7 @@ public final class MeasurableFontSpec extends FontSpec {
                 Unit.Raw.valueOf(SVGFont.defaultFontSize()));
     }
 
-    public String @NotNull [] families() {
+    public @NotNull List<String> families() {
         return families;
     }
 
@@ -72,7 +73,8 @@ public final class MeasurableFontSpec extends FontSpec {
         return currentWeight;
     }
 
-    public @NotNull Length currentSize() {
+    @NotNull
+    private Length currentSize() {
         return currentSize;
     }
 
@@ -92,7 +94,7 @@ public final class MeasurableFontSpec extends FontSpec {
 
     public @NotNull MeasurableFontSpec derive(@Nullable AttributeFontSpec other) {
         if (other == null) return this;
-        String[] newFamilies = other.families != null && other.families.length > 0
+        List<String> newFamilies = !other.families.isEmpty()
                 ? other.families
                 : this.families;
         FontStyle newStyle = other.style != null
@@ -116,7 +118,7 @@ public final class MeasurableFontSpec extends FontSpec {
     @Override
     public String toString() {
         return "MeasurableFontSpec{" +
-                "families=" + Arrays.toString(families) +
+                "families=" + families +
                 ", style=" + style +
                 ", sizeAdjust=" + sizeAdjust +
                 ", stretch=" + stretch +

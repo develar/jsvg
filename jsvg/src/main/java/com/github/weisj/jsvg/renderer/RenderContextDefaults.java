@@ -6,7 +6,7 @@ import com.github.weisj.jsvg.attributes.paint.PaintParser;
 import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import org.jetbrains.annotations.NotNull;
 
-public final class RenderContextDefaults {
+final class RenderContextDefaults {
     public static final MeasurableFontSpec FONT_SPEC = MeasurableFontSpec.createDefault();
     static final AwtSVGPaint DEFAULT_PAINT = new AwtSVGPaint(PaintParser.DEFAULT_COLOR);
     static final PaintContext DEFAULT_CONTEXT = createDefault();

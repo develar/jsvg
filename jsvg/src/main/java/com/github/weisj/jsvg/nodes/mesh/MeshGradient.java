@@ -71,7 +71,7 @@ public final class MeshGradient extends ContainerNode implements SVGPaint {
         // Todo: transform
     }
 
-    public void renderMesh(@NotNull MeasureContext measure, @NotNull Graphics2D g) {
+    private void renderMesh(@NotNull MeasureContext measure, @NotNull Graphics2D g) {
         Graphics2D meshGraphics = (Graphics2D) g.create();
         // meshGraphics.translate(x.resolveWidth(measure), y.resolveHeight(measure));
 

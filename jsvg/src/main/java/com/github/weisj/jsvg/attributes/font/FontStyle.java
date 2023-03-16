@@ -21,12 +21,11 @@
  */
 package com.github.weisj.jsvg.attributes.font;
 
-import java.awt.geom.AffineTransform;
-
+import com.github.weisj.jsvg.attributes.Radian;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.github.weisj.jsvg.attributes.Radian;
+import java.awt.geom.AffineTransform;
 
 /**
  * This abstract class shouldn't be extended besides those constants.
@@ -95,11 +94,11 @@ abstract class FontStyle {
 
     static final class Oblique extends FontStyle {
         public static final @Radian float DEFAULT_ANGLE = (float) Math.toRadians(14);
-        public static final @NotNull FontStyle.Oblique DEFAULT = new Oblique(DEFAULT_ANGLE);
+        private static final @NotNull FontStyle.Oblique DEFAULT = new Oblique(DEFAULT_ANGLE);
 
         private final @Radian float angle;
 
-        public Oblique(@Radian float angle) {
+        Oblique(@Radian float angle) {
             this.angle = angle;
         }
 
@@ -116,8 +115,7 @@ abstract class FontStyle {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof Oblique)) return false;
-            Oblique that = (Oblique) o;
+            if (!(o instanceof Oblique that)) return false;
             return Float.compare(that.angle, angle) == 0;
         }
 

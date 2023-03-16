@@ -41,18 +41,18 @@ import com.github.weisj.jsvg.renderer.GraphicsUtil;
 
 @SuppressWarnings("java:S119") // Generic name Self is intentional
 abstract class AbstractGradient<Self extends AbstractGradient<Self>> extends ContainerNode implements SVGPaint {
-    protected AffineTransform gradientTransform;
-    protected UnitType gradientUnits;
-    protected SpreadMethod spreadMethod;
+    AffineTransform gradientTransform;
+    private UnitType gradientUnits;
+    SpreadMethod spreadMethod;
 
     private @NotNull Color[] colors;
     private @Percentage float[] offsets;
 
-    public @Percentage float[] offsets() {
+    @Percentage float[] offsets() {
         return offsets;
     }
 
-    public @NotNull Color[] colors() {
+    @NotNull Color[] colors() {
         return colors;
     }
 
@@ -165,7 +165,7 @@ abstract class AbstractGradient<Self extends AbstractGradient<Self>> extends Con
     protected abstract @NotNull Paint gradientForBounds(@NotNull MeasureContext measure, @NotNull Rectangle2D bounds,
             @Percentage float[] gradOffsets, @NotNull Color[] gradColors);
 
-    protected @NotNull AffineTransform computeViewTransform(@NotNull Rectangle2D bounds) {
+    @NotNull AffineTransform computeViewTransform(@NotNull Rectangle2D bounds) {
         AffineTransform viewTransform = gradientUnits.viewTransform(bounds);
         if (gradientTransform != null) viewTransform.concatenate(gradientTransform);
         return viewTransform;

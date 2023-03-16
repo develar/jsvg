@@ -25,7 +25,7 @@ package com.github.weisj.jsvg.geometry.util;
 import java.awt.geom.PathIterator;
 
 
-public class PathLengthCalculator {
+class PathLengthCalculator {
 
     private double x = 0;
     private double y = 0;

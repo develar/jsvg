@@ -70,8 +70,8 @@ public final class MaskedPaint implements Paint, GraphicsUtil.WrappingPaint {
         private final @NotNull Raster maskRaster;
         private final @NotNull Point offset;
 
-        MaskPaintContext(@NotNull PaintContext parentContext, @NotNull Raster maskRaster,
-                @NotNull Point offset) {
+        private MaskPaintContext(@NotNull PaintContext parentContext, @NotNull Raster maskRaster,
+                                 @NotNull Point offset) {
             this.parentContext = parentContext;
             parentColorModel = parentContext.getColorModel();
             this.maskRaster = maskRaster;

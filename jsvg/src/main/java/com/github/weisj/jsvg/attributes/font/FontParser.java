@@ -28,12 +28,14 @@ import com.github.weisj.jsvg.attributes.Percentage;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.parser.AttributeNode;
 
+import java.util.List;
+
 public final class FontParser {
     private FontParser() {}
 
     // Todo: font-variant
     public static @NotNull AttributeFontSpec parseFontSpec(@NotNull AttributeNode node) {
-        String[] fontFamilies = node.getStringList("font-family", true);
+        List<String> fontFamilies = node.getStringList("font-family", true);
 
         // Todo: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight#fallback_weights
         @Nullable FontWeight weight = parseWeight(node);
@@ -45,7 +47,7 @@ public final class FontParser {
         return new AttributeFontSpec(fontFamilies, style, sizeAdjust, stretch, size, weight);
     }
 
-    public static @Nullable FontWeight parseWeight(@NotNull AttributeNode node) {
+    private static @Nullable FontWeight parseWeight(@NotNull AttributeNode node) {
         final String fontWeightKey = "font-weight";
         FontWeight weight = node.getEnum(fontWeightKey, PredefinedFontWeight.Number);
         if (weight == PredefinedFontWeight.Number) {
@@ -60,7 +62,7 @@ public final class FontParser {
         return weight;
     }
 
-    public static @Percentage float parseStretch(@NotNull AttributeNode node) {
+    private static @Percentage float parseStretch(@NotNull AttributeNode node) {
         FontStretch stretch = node.getEnum("font-stretch", FontStretch.Percentage);
         return stretch == FontStretch.Percentage
                 ? node.parser().parsePercentage(node.getValue("font-stretch"),
@@ -83,7 +85,7 @@ public final class FontParser {
         return node.getLength("font-size-adjust");
     }
 
-    public static @Nullable FontStyle parseFontStyle(@NotNull AttributeNode node) {
+    private static @Nullable FontStyle parseFontStyle(@NotNull AttributeNode node) {
         FontStyle style = null;
         String styleStr = node.getValue("font-style");
         if ("normal".equalsIgnoreCase(styleStr)) {

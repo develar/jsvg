@@ -38,8 +38,9 @@ public enum UnitType {
         return deriveMeasure(measure, 1, 1);
     }
 
-    public @NotNull MeasureContext deriveMeasure(@NotNull MeasureContext measure, double objectWidth,
-            double objectHeight) {
+    @NotNull
+    private MeasureContext deriveMeasure(@NotNull MeasureContext measure, double objectWidth,
+                                         double objectHeight) {
         if (this == ObjectBoundingBox) {
             return measure.derive((float) objectWidth, (float) objectHeight);
         } else {

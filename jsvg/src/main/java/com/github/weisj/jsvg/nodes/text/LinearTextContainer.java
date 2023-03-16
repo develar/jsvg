@@ -33,11 +33,11 @@ import com.github.weisj.jsvg.parser.AttributeNode;
 import com.github.weisj.jsvg.renderer.RenderContext;
 
 abstract class LinearTextContainer extends TextContainer {
-    protected Length[] x;
-    protected Length[] y;
-    protected Length[] dx;
-    protected Length[] dy;
-    protected float[] rotate;
+    private Length[] x;
+    private Length[] y;
+    private Length[] dx;
+    private Length[] dy;
+    private float[] rotate;
 
     @Override
     @MustBeInvokedByOverriders

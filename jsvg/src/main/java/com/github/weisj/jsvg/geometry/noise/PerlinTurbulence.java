@@ -58,7 +58,7 @@ public final class PerlinTurbulence {
         init(seed);
     }
 
-    public static class StitchInfo {
+    private static class StitchInfo {
         private int width;
         private int height;
         private int wrapX;

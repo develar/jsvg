@@ -71,8 +71,8 @@ final class DataUri {
         this(mime, charset, null, null, data);
     }
 
-    public DataUri(@NotNull String mime, @Nullable Charset charset, @Nullable String filename,
-            @Nullable String contentDisposition, byte @NotNull [] data) {
+    private DataUri(@NotNull String mime, @Nullable Charset charset, @Nullable String filename,
+                    @Nullable String contentDisposition, byte @NotNull [] data) {
         this.mime = mime;
         this.charset = charset;
         this.filename = filename;
@@ -119,12 +119,12 @@ final class DataUri {
         return result;
     }
 
-    static class MalformedDataUriException extends IOException {
-        MalformedDataUriException(@NotNull String reason) {
+    private static class MalformedDataUriException extends IOException {
+        private MalformedDataUriException(@NotNull String reason) {
             super(reason);
         }
 
-        MalformedDataUriException(@NotNull Exception reason) {
+        private MalformedDataUriException(@NotNull Exception reason) {
             super(reason);
         }
     }

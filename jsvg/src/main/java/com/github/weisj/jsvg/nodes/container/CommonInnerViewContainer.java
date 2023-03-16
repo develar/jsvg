@@ -35,8 +35,8 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.geom.Point2D;
 
 public abstract class CommonInnerViewContainer extends BaseInnerViewContainer implements ShapedContainer<SVGNode> {
-    protected Length x;
-    protected Length y;
+    private Length x;
+    private Length y;
     protected Length width;
     protected Length height;
 

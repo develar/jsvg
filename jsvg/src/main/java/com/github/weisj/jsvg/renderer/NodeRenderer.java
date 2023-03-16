@@ -68,8 +68,8 @@ public final class NodeRenderer {
         private final @NotNull Filter filter;
         private final @NotNull Filter.FilterInfo filterInfo;
 
-        InfoWithFilter(@NotNull Renderable renderable, @NotNull RenderContext context, @NotNull Graphics2D g,
-                @NotNull Filter filter, @NotNull Rectangle2D elementBounds) {
+        private InfoWithFilter(@NotNull Renderable renderable, @NotNull RenderContext context, @NotNull Graphics2D g,
+                               @NotNull Filter filter, @NotNull Rectangle2D elementBounds) {
             super(renderable, context, g);
             this.filter = filter;
             this.filterInfo = filter.createFilterInfo(g, context, elementBounds);

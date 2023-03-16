@@ -34,7 +34,7 @@ import com.github.weisj.jsvg.renderer.RenderContext;
 public class AWTSVGShape<T extends Shape> implements MeasurableShape {
     public static final Rectangle2D EMPTY_SHAPE = new Rectangle();
     public static final SVGShape EMPTY = new AWTSVGShape<>(EMPTY_SHAPE, 0f);
-    protected final @NotNull T shape;
+    final @NotNull T shape;
     private Rectangle2D bounds;
 
     private double pathLength;

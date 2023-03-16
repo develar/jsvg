@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -62,11 +63,6 @@ public final class AttributeNode {
         this.parent = parent;
         this.namedElements = namedElements;
         this.loadHelper = loadHelper;
-    }
-
-    @NotNull
-    Map<String, ParsedElement> namedElements() {
-        return namedElements;
     }
 
     private static boolean isBlank(@NotNull String s) {
@@ -97,8 +93,10 @@ public final class AttributeNode {
     }
 
     private <T> @Nullable T getElementByUrl(@NotNull Class<T> type, @Nullable String value) {
-        String url = loadHelper.attributeParser().parseUrl(value);
-        if (url != null && url.startsWith("#")) url = url.substring(1);
+        String url = AttributeParser.parseUrl(value);
+        if (url != null && url.startsWith("#")) {
+            url = url.substring(1);
+        }
         return getElementById(type, url);
     }
 
@@ -107,8 +105,7 @@ public final class AttributeNode {
         return getElementByUrl(type, value);
     }
 
-    public <T> @Nullable T getElementByHref(@NotNull Class<T> type, @NotNull Category category,
-            @Nullable String value) {
+    public <T> @Nullable T getElementByHref(@NotNull Class<T> type, @NotNull Category category, @Nullable String value) {
         T element = getElementByHref(type, value);
         if (element == null) return null;
         for (Category cat : element.getClass().getAnnotation(ElementCategories.class).value()) {
@@ -248,12 +245,12 @@ public final class AttributeNode {
         return attributes.containsKey(name);
     }
 
-    public String @NotNull [] getStringList(@NotNull String name) {
+    public List<String> getStringList(@NotNull String name) {
         return getStringList(name, false);
     }
 
 
-    public String @NotNull [] getStringList(@NotNull String name, boolean requireComma) {
+    public List<String> getStringList(@NotNull String name, boolean requireComma) {
         return loadHelper.attributeParser().parseStringList(getValue(name), requireComma);
     }
 

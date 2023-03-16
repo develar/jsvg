@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -102,7 +103,7 @@ public final class AttributeParser {
         }
     }
 
-    public double parseDouble(@Nullable String value, double fallback) {
+    private double parseDouble(@Nullable String value, double fallback) {
         if (value == null) return fallback;
         try {
             return Double.parseDouble(value);
@@ -131,10 +132,10 @@ public final class AttributeParser {
 
     public Length[] parseLengthList(@Nullable String value) {
         if (value != null && value.equalsIgnoreCase("none")) return new Length[0];
-        String[] values = parseStringList(value, false);
-        Length[] ret = new Length[values.length];
+        List<String> values = parseStringList(value, false);
+        Length[] ret = new Length[values.size()];
         for (int i = 0; i < ret.length; i++) {
-            Length length = parseLength(values[i], null);
+            Length length = parseLength(values.get(i), null);
             if (length == null) return new Length[0];
             ret[i] = length;
         }
@@ -142,25 +143,25 @@ public final class AttributeParser {
     }
 
     public float[] parseFloatList(@Nullable String value) {
-        String[] values = parseStringList(value, false);
-        float[] ret = new float[values.length];
+        List<String> values = parseStringList(value, false);
+        float[] ret = new float[values.size()];
         for (int i = 0; i < ret.length; i++) {
-            ret[i] = parseFloat(values[i], 0);
+            ret[i] = parseFloat(values.get(i), 0);
         }
         return ret;
     }
 
     public double[] parseDoubleList(@Nullable String value) {
-        String[] values = parseStringList(value, false);
-        double[] ret = new double[values.length];
+        List<String> values = parseStringList(value, false);
+        double[] ret = new double[values.size()];
         for (int i = 0; i < ret.length; i++) {
-            ret[i] = parseDouble(values[i], 0);
+            ret[i] = parseDouble(values.get(i), 0);
         }
         return ret;
     }
 
-    public @NotNull String[] parseStringList(@Nullable String value, boolean requireComma) {
-        if (value == null || value.isEmpty()) return new String[0];
+    public List<String> parseStringList(@Nullable String value, boolean requireComma) {
+        if (value == null || value.isEmpty()) return Collections.emptyList();
         List<String> list = new ArrayList<>();
         int max = value.length();
         int start = 0;
@@ -183,7 +184,7 @@ public final class AttributeParser {
             }
         }
         if ((i - start) > 0) list.add(value.substring(start, i));
-        return list.toArray(new String[0]);
+        return list;
     }
 
     public @Nullable SVGPaint parsePaint(@Nullable String value, @NotNull AttributeNode attributeNode) {
@@ -244,50 +245,38 @@ public final class AttributeParser {
         String command = value.substring(0, value.indexOf('(')).toLowerCase(Locale.ENGLISH);
         double[] values = parseDoubleList(value.substring(first + 1, last));
         switch (command) {
-            case "matrix":
-                tx.concatenate(new AffineTransform(values));
-                break;
-            case "translate":
+            case "matrix" -> tx.concatenate(new AffineTransform(values));
+            case "translate" -> {
                 if (values.length == 1) {
                     tx.translate(values[0], 0);
-                } else {
+                }
+                else {
                     tx.translate(values[0], values[1]);
                 }
-                break;
-            case "translatex":
-                tx.translate(values[0], 0);
-                break;
-            case "translatey":
-                tx.translate(0, values[0]);
-                break;
-            case "scale":
+            }
+            case "translatex" -> tx.translate(values[0], 0);
+            case "translatey" -> tx.translate(0, values[0]);
+            case "scale" -> {
                 if (values.length == 1) {
                     tx.scale(values[0], values[0]);
-                } else {
+                }
+                else {
                     tx.scale(values[0], values[1]);
                 }
-                break;
-            case "scalex":
-                tx.scale(values[0], 1);
-                break;
-            case "scaley":
-                tx.scale(1, values[0]);
-                break;
-            case "rotate":
+            }
+            case "scalex" -> tx.scale(values[0], 1);
+            case "scaley" -> tx.scale(1, values[0]);
+            case "rotate" -> {
                 if (values.length > 2) {
                     tx.rotate(Math.toRadians(values[0]), values[1], values[2]);
-                } else {
+                }
+                else {
                     tx.rotate(Math.toRadians(values[0]));
                 }
-                break;
-            case "skewx":
-                tx.shear(Math.tan(Math.toRadians(values[0])), 0);
-                break;
-            case "skewy":
-                tx.shear(0, Math.tan(Math.toRadians(values[0])));
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown transform type: " + command);
+            }
+            case "skewx" -> tx.shear(Math.tan(Math.toRadians(values[0])), 0);
+            case "skewy" -> tx.shear(0, Math.tan(Math.toRadians(values[0])));
+            default -> throw new IllegalArgumentException("Unknown transform type: " + command);
         }
     }
 

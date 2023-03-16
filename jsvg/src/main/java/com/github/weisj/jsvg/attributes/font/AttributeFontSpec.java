@@ -21,22 +21,21 @@
  */
 package com.github.weisj.jsvg.attributes.font;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.Percentage;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.nodes.prototype.Mutator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class AttributeFontSpec extends FontSpec implements Mutator<MeasurableFontSpec> {
-    protected final @Nullable FontSize size;
-    protected final @Nullable FontWeight weight;
+import java.util.List;
+import java.util.Objects;
 
-    AttributeFontSpec(@NotNull String[] families, @Nullable FontStyle style, @Nullable Length sizeAdjust,
-            @Percentage float stretch, @Nullable FontSize size, @Nullable FontWeight weight) {
+public final class AttributeFontSpec extends FontSpec implements Mutator<MeasurableFontSpec> {
+    final @Nullable FontSize size;
+    final @Nullable FontWeight weight;
+
+    AttributeFontSpec(@NotNull List<String> families, @Nullable FontStyle style, @Nullable Length sizeAdjust,
+                      @Percentage float stretch, @Nullable FontSize size, @Nullable FontWeight weight) {
         super(families, style, sizeAdjust, stretch);
         this.size = size;
         this.weight = weight;
@@ -58,7 +57,7 @@ public class AttributeFontSpec extends FontSpec implements Mutator<MeasurableFon
     @Override
     public String toString() {
         return "AttributeFontSpec{" +
-                "families=" + Arrays.toString(families) +
+                "families=" + families +
                 ", style=" + style +
                 ", weight=" + weight +
                 ", size=" + size +
@@ -70,9 +69,8 @@ public class AttributeFontSpec extends FontSpec implements Mutator<MeasurableFon
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AttributeFontSpec)) return false;
+        if (!(o instanceof AttributeFontSpec fontSpec)) return false;
         if (!super.equals(o)) return false;
-        AttributeFontSpec fontSpec = (AttributeFontSpec) o;
         return Objects.equals(size, fontSpec.size) && Objects.equals(weight, fontSpec.weight);
     }
 

@@ -31,28 +31,28 @@ import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
 
 class GlyphCursor {
-    protected final Rectangle2D completeGlyphRunBounds;
-    protected @NotNull GlyphAdvancement advancement = GlyphAdvancement.defaultAdvancement();
+    final Rectangle2D completeGlyphRunBounds;
+    @NotNull GlyphAdvancement advancement = GlyphAdvancement.defaultAdvancement();
 
-    protected float x;
-    protected float y;
-    protected int glyphOffset;
-    protected final AffineTransform transform;
+    float x;
+    float y;
+    private int glyphOffset;
+    final AffineTransform transform;
 
-    protected Length[] xLocations;
-    protected int xOff;
+    Length[] xLocations;
+    int xOff;
 
-    protected Length[] xDeltas;
-    protected int dxOff;
+    Length[] xDeltas;
+    int dxOff;
 
-    protected Length[] yLocations;
-    protected int yOff;
+    Length[] yLocations;
+    int yOff;
 
-    protected Length[] yDeltas;
-    protected int dyOff;
+    Length[] yDeltas;
+    int dyOff;
 
-    protected float[] rotations;
-    protected int rotOff;
+    float[] rotations;
+    int rotOff;
 
     GlyphCursor(float x, float y, @NotNull AffineTransform transform) {
         this(x, y, transform, new Rectangle2D.Float(Length.UNSPECIFIED_RAW, Length.UNSPECIFIED_RAW, 0, 0));
@@ -130,7 +130,7 @@ class GlyphCursor {
         x += advancement.spacingAdvancement(letterSpacing);
     }
 
-    protected float nextX(@NotNull MeasureContext measure) {
+    private float nextX(@NotNull MeasureContext measure) {
         if (xLocations != null && xOff < xLocations.length) {
             x = xLocations[xOff].resolveWidth(measure);
             xOff++;
@@ -138,14 +138,14 @@ class GlyphCursor {
         return x;
     }
 
-    protected float nextDeltaX(@NotNull MeasureContext measure) {
+    float nextDeltaX(@NotNull MeasureContext measure) {
         if (xDeltas != null && dxOff < xDeltas.length) {
             return xDeltas[dxOff++].resolveWidth(measure);
         }
         return 0;
     }
 
-    protected float nextY(@NotNull MeasureContext measure) {
+    private float nextY(@NotNull MeasureContext measure) {
         if (yLocations != null && yOff < yLocations.length) {
             y = yLocations[yOff].resolveHeight(measure);
             yOff++;
@@ -153,14 +153,14 @@ class GlyphCursor {
         return y;
     }
 
-    protected float nextDeltaY(@NotNull MeasureContext measure) {
+    float nextDeltaY(@NotNull MeasureContext measure) {
         if (yDeltas != null && dyOff < yDeltas.length) {
             return yDeltas[dyOff++].resolveHeight(measure);
         }
         return 0;
     }
 
-    protected double nextRotation() {
+    private double nextRotation() {
         if (rotations != null && rotations.length != 0) {
             float rotation = rotations[rotOff];
             rotOff = Math.min(rotations.length - 1, rotOff + 1);

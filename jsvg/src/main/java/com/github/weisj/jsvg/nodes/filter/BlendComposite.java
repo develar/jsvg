@@ -92,7 +92,7 @@ public final class BlendComposite implements Composite {
      *
      * @return the blending mode used by this object
      */
-    public BlendMode blendMode() {
+    private BlendMode blendMode() {
         return mode;
     }
 
@@ -184,9 +184,9 @@ public final class BlendComposite implements Composite {
     }
 
     private static abstract class Blender {
-        public abstract void blend(int[] src, int[] dst, int[] result);
+        protected abstract void blend(int[] src, int[] dst, int[] result);
 
-        public static Blender forBlendMode(BlendMode blendMode) {
+        static Blender forBlendMode(BlendMode blendMode) {
             switch (blendMode) {
                 case Normal:
                     return new Blender() {

@@ -260,9 +260,9 @@ public class PathParser {
     }
 
     private static class NumberCharState {
-        int iteration = 0;
-        boolean dotAllowed = true;
-        boolean signAllowed = true;
-        boolean exponentAllowed = true;
+        private int iteration = 0;
+        private boolean dotAllowed = true;
+        private boolean signAllowed = true;
+        private boolean exponentAllowed = true;
     }
 }

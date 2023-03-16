@@ -21,13 +21,13 @@
  */
 package com.github.weisj.jsvg.attributes;
 
-import java.awt.geom.AffineTransform;
-import java.util.Objects;
-
+import com.github.weisj.jsvg.geometry.size.FloatSize;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.github.weisj.jsvg.geometry.size.FloatSize;
+import java.awt.geom.AffineTransform;
+import java.util.List;
+import java.util.Objects;
 
 
 public final class PreserveAspectRatio {
@@ -162,8 +162,8 @@ public final class PreserveAspectRatio {
         Slice
     }
 
-    public final @NotNull Align align;
-    public final @NotNull MeetOrSlice meetOrSlice;
+    private final @NotNull Align align;
+    private final @NotNull MeetOrSlice meetOrSlice;
 
     private PreserveAspectRatio(@NotNull Align align, @NotNull MeetOrSlice meetOrSlice) {
         this.align = align;
@@ -179,27 +179,28 @@ public final class PreserveAspectRatio {
         return parse(preserveAspectRation, null, parser);
     }
 
-    public static @NotNull PreserveAspectRatio parse(@Nullable String preserveAspectRation,
-            @Nullable PreserveAspectRatio fallback, @NotNull AttributeParser parser) {
+    private static @NotNull PreserveAspectRatio parse(@Nullable String preserveAspectRation,
+                                                      @Nullable PreserveAspectRatio fallback, @NotNull AttributeParser parser) {
         Align align = Align.xMidYMid;
         MeetOrSlice meetOrSlice = MeetOrSlice.Meet;
         if (preserveAspectRation == null) {
             return fallback != null ? fallback : new PreserveAspectRatio(align, meetOrSlice);
         }
-        String[] components = parser.parseStringList(preserveAspectRation, false);
-        if (components.length < 1 || components.length > 2)
+        List<String> components = parser.parseStringList(preserveAspectRation, false);
+        if (components.size() < 1 || components.size() > 2) {
             throw new IllegalArgumentException("Too many arguments specified: " + preserveAspectRation);
-        align = parser.parseEnum(components[0], align);
-        if (components.length > 1)
-            meetOrSlice = parser.parseEnum(components[1], meetOrSlice);
+        }
+        align = parser.parseEnum(components.get(0), align);
+        if (components.size() > 1) {
+            meetOrSlice = parser.parseEnum(components.get(1), meetOrSlice);
+        }
         return new PreserveAspectRatio(align, meetOrSlice);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PreserveAspectRatio)) return false;
-        PreserveAspectRatio that = (PreserveAspectRatio) o;
+        if (!(o instanceof PreserveAspectRatio that)) return false;
         return align == that.align && meetOrSlice == that.meetOrSlice;
     }
 
@@ -216,16 +217,10 @@ public final class PreserveAspectRatio {
             float xScale = size.width / viewBox.width;
             float yScale = size.height / viewBox.height;
 
-            switch (meetOrSlice) {
-                case Meet:
-                    xScale = yScale = Math.min(xScale, yScale);
-                    break;
-                case Slice:
-                    xScale = yScale = Math.max(xScale, yScale);
-                    break;
-                default:
-                    throw new IllegalStateException();
-            }
+            xScale = switch (meetOrSlice) {
+                case Meet -> yScale = Math.min(xScale, yScale);
+                case Slice -> yScale = Math.max(xScale, yScale);
+            };
 
             viewTransform.translate(
                     align.xAlign.align(size.width, viewBox.width * xScale),

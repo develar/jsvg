@@ -34,7 +34,7 @@ public final class GeometryUtil {
 
     private GeometryUtil() {}
 
-    public static boolean approximatelyEqual(double a, double b) {
+    private static boolean approximatelyEqual(double a, double b) {
         return Math.abs(a - b) < EPS;
     }
 
@@ -83,7 +83,7 @@ public final class GeometryUtil {
         return distanceSquared(p1.x, p1.y, p2.x, p2.y);
     }
 
-    public static double distanceSquared(double x1, double y1, double x2, double y2) {
+    private static double distanceSquared(double x1, double y1, double x2, double y2) {
         double dx = x2 - x1;
         double dy = y2 - y1;
         return dx * dx + dy * dy;

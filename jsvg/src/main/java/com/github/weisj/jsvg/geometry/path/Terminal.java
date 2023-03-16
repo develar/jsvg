@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Terminal extends PathCommand {
 
-    protected Terminal() {
+    Terminal() {
         super(1);
     }
 

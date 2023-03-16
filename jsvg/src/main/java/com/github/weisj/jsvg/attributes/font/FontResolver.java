@@ -21,17 +21,16 @@
  */
 package com.github.weisj.jsvg.attributes.font;
 
+import com.github.weisj.jsvg.geometry.size.MeasureContext;
+import com.google.errorprone.annotations.Immutable;
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.text.AttributedCharacterIterator;
-import java.util.*;
 import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-
-import com.github.weisj.jsvg.geometry.size.MeasureContext;
-import com.google.errorprone.annotations.Immutable;
+import java.util.*;
 
 public final class FontResolver {
     private FontResolver() {}
@@ -50,8 +49,8 @@ public final class FontResolver {
         return resolvedFont;
     }
 
-    public static @NotNull SVGFont resolveWithoutCache(@NotNull MeasurableFontSpec fontSpec,
-            @NotNull MeasureContext measureContext) {
+    private static @NotNull SVGFont resolveWithoutCache(@NotNull MeasurableFontSpec fontSpec,
+                                                        @NotNull MeasureContext measureContext) {
         String family = findSupportedFontFamily(fontSpec);
 
         FontStyle style = fontSpec.style();
@@ -95,28 +94,27 @@ public final class FontResolver {
     }
 
     private static @NotNull String findSupportedFontFamily(@NotNull MeasurableFontSpec fontSpec) {
-        String[] families = fontSpec.families();
-        for (String family : families) {
+        for (String family : fontSpec.families()) {
             if (FontFamiliesCache.INSTANCE.isSupportedFontFamily(family)) return family;
         }
         return MeasurableFontSpec.DEFAULT_FONT_FAMILY_NAME;
     }
 
     public static @NotNull List<@NotNull String> supportedFonts() {
-        return Collections.unmodifiableList(Arrays.asList(FontFamiliesCache.INSTANCE.supportedFonts));
+        return List.of(FontFamiliesCache.INSTANCE.supportedFonts);
     }
 
     @SuppressWarnings("ImmutableEnumChecker")
     private enum FontFamiliesCache {
         INSTANCE;
 
-        private final @NotNull String[] supportedFonts;
+        private final String @NotNull [] supportedFonts;
 
         FontFamiliesCache() {
             supportedFonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         }
 
-        boolean isSupportedFontFamily(final @NotNull String fontName) {
+        private boolean isSupportedFontFamily(final @NotNull String fontName) {
             for (String supportedFont : supportedFonts) {
                 if (supportedFont.equalsIgnoreCase(fontName)) return true;
             }
@@ -151,8 +149,7 @@ public final class FontResolver {
             @Override
             public boolean equals(Object o) {
                 if (this == o) return true;
-                if (!(o instanceof CacheKey)) return false;
-                CacheKey cacheKey = (CacheKey) o;
+                if (!(o instanceof CacheKey cacheKey)) return false;
                 return spec.equals(cacheKey.spec) && context.equals(cacheKey.context);
             }
 

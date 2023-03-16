@@ -97,8 +97,8 @@ public final class FeTurbulence extends FilterPrimitive {
         private final Rectangle2D tileBounds;
         private BufferedImage bufferedImage;
 
-        public TurbulenceChannel(@NotNull Rectangle2D tileBounds, int imageWidth, int imageHeight,
-                float seed, int octaves, double xFrequency, double yFrequency, Type type) {
+        private TurbulenceChannel(@NotNull Rectangle2D tileBounds, int imageWidth, int imageHeight,
+                                  float seed, int octaves, double xFrequency, double yFrequency, Type type) {
             this.tileBounds = tileBounds;
             this.imageWidth = imageWidth;
             this.imageHeight = imageHeight;

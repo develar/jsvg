@@ -26,9 +26,11 @@ import org.jetbrains.annotations.Nullable;
 
 import com.github.weisj.jsvg.parser.AttributeNode;
 
-public class PaintOrder {
+import java.util.List;
 
-    public static final PaintOrder NORMAL = new PaintOrder(Phase.FILL, Phase.STROKE, Phase.MARKERS);
+public final class PaintOrder {
+
+    private static final PaintOrder NORMAL = new PaintOrder(Phase.FILL, Phase.STROKE, Phase.MARKERS);
 
     public enum Phase {
         FILL,
@@ -36,13 +38,13 @@ public class PaintOrder {
         MARKERS
     }
 
-    private final @NotNull Phase[] phases;
+    private final Phase @NotNull [] phases;
 
-    public PaintOrder(@NotNull Phase... phases) {
+    private PaintOrder(Phase @NotNull ... phases) {
         this.phases = phases;
     }
 
-    public @NotNull Phase[] phases() {
+    public Phase @NotNull [] phases() {
         return phases;
     }
 
@@ -52,12 +54,12 @@ public class PaintOrder {
 
         if (value == null || "normal".equals(value)) return NORMAL;
 
-        String[] rawPhases = parser.parseStringList(value, false);
+        List<String> rawPhases = parser.parseStringList(value, false);
         Phase[] phases = new Phase[3];
-        int length = Math.min(phases.length, rawPhases.length);
+        int length = Math.min(phases.length, rawPhases.size());
         int i = 0;
         while (i < length) {
-            phases[i] = parser.parseEnum(rawPhases[i], Phase.class);
+            phases[i] = parser.parseEnum(rawPhases.get(i), Phase.class);
             if (phases[i] != null) i++;
         }
         while (i < 3) {
@@ -68,7 +70,7 @@ public class PaintOrder {
         return new PaintOrder(phases);
     }
 
-    private static @NotNull Phase findNextInNormalOrder(@NotNull Phase[] phases, int maxIndex) {
+    private static @NotNull Phase findNextInNormalOrder(Phase @NotNull [] phases, int maxIndex) {
         for (Phase phase : NORMAL.phases()) {
             boolean found = false;
             for (int i = 0; i < maxIndex; i++) {

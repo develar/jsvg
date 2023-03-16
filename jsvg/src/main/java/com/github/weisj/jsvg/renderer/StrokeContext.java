@@ -40,8 +40,8 @@ public final class StrokeContext {
     public final Length[] dashPattern;
     public final @Nullable Length dashOffset;
 
-    public StrokeContext(@Nullable Length strokeWidth, @Nullable LineCap lineCap, @Nullable LineJoin lineJoin,
-            float miterLimit, Length @NotNull [] dashPattern, @Nullable Length dashOffset) {
+    private StrokeContext(@Nullable Length strokeWidth, @Nullable LineCap lineCap, @Nullable LineJoin lineJoin,
+                          float miterLimit, Length @NotNull [] dashPattern, @Nullable Length dashOffset) {
         this.strokeWidth = strokeWidth;
         this.lineCap = lineCap;
         this.lineJoin = lineJoin;

@@ -24,7 +24,7 @@ package com.github.weisj.jsvg.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class Todo {
+final class Todo {
     private Todo() {}
 
     @SuppressWarnings("TypeParameterUnusedInFormals")
@@ -33,7 +33,7 @@ public final class Todo {
     }
 
     @SuppressWarnings({"TypeParameterUnusedInFormals", "DoNotCallSuggester"})
-    public static <T> @NotNull T todo(@Nullable String msg) {
+    private static <T> @NotNull T todo(@Nullable String msg) {
         throw new UnsupportedOperationException("Todo: " + msg);
     }
 }

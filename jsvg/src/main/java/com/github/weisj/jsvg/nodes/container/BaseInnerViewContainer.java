@@ -50,7 +50,7 @@ public abstract class BaseInnerViewContainer extends CommonRenderableContainerNo
 
     protected abstract @Nullable Point2D anchorLocation(@NotNull MeasureContext context);
 
-    public abstract @NotNull FloatSize size(@NotNull RenderContext context);
+    protected abstract @NotNull FloatSize size(@NotNull RenderContext context);
 
     protected abstract @NotNull Overflow defaultOverflow();
 
@@ -82,9 +82,9 @@ public abstract class BaseInnerViewContainer extends CommonRenderableContainerNo
         renderWithSize(useSiteSize, view, null, context, g);
     }
 
-    public final void renderWithSize(@NotNull FloatSize useSiteSize, @Nullable ViewBox view,
-            @Nullable PreserveAspectRatio preserveAspectRatio,
-            @NotNull RenderContext context, @NotNull Graphics2D g) {
+    protected final void renderWithSize(@NotNull FloatSize useSiteSize, @Nullable ViewBox view,
+                                        @Nullable PreserveAspectRatio preserveAspectRatio,
+                                        @NotNull RenderContext context, @NotNull Graphics2D g) {
         MeasureContext measureContext = context.measureContext();
 
         Point2D outerPos = outerLocation(measureContext);

@@ -3,7 +3,7 @@ package com.github.weisj.jsvg.parser;
 import com.github.weisj.jsvg.attributes.AttributeParser;
 import org.jetbrains.annotations.NotNull;
 
-public interface LoadHelper {
+interface LoadHelper {
     @NotNull
     AttributeParser attributeParser();
 

@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.weisj</groupId>
   <artifactId>jsvg</artifactId>
-  <version>0.1.0-jb.5</version>
+  <version>0.1.0-jb.7</version>
   <packaging>jar</packaging>
   <dependencies>
     <dependency>

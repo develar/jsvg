@@ -43,17 +43,17 @@ public abstract class FilterPrimitive extends AbstractSVGNode {
     private Object inputChannel;
     private Object resultChannel;
 
-    protected @NotNull Channel channel(@NotNull Object channelName, @NotNull FilterContext context) {
+    @NotNull Channel channel(@NotNull Object channelName, @NotNull FilterContext context) {
         Channel input = context.getChannel(channelName);
         if (input == null) throw new IllegalStateException("Input channel [" + channelName + "] doesn't exist.");
         return input;
     }
 
-    protected @NotNull Channel inputChannel(@NotNull FilterContext context) {
+    @NotNull Channel inputChannel(@NotNull FilterContext context) {
         return channel(inputChannel, context);
     }
 
-    protected void saveResult(@NotNull Channel output, @NotNull FilterContext filterContext) {
+    void saveResult(@NotNull Channel output, @NotNull FilterContext filterContext) {
         filterContext.addResult(resultChannel, output);
         if (resultChannel != DefaultFilterChannel.LastResult) {
             filterContext.addResult(DefaultFilterChannel.LastResult, output);

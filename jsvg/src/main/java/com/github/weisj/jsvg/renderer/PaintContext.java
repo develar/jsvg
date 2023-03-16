@@ -72,7 +72,8 @@ public final class PaintContext implements Mutator<PaintContext> {
         return new AwtSVGPaint(c);
     }
 
-    public @NotNull PaintContext derive(@NotNull PaintContext context) {
+    @NotNull
+    private PaintContext derive(@NotNull PaintContext context) {
         return new PaintContext(
                 context.color != null ? context.color : color,
                 context.fillPaint != null ? context.fillPaint : fillPaint,
