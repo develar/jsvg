@@ -21,18 +21,9 @@
  */
 package com.github.weisj.jsvg.parser;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.github.weisj.jsvg.attributes.*;
+import com.github.weisj.jsvg.attributes.AttributeParser;
+import com.github.weisj.jsvg.attributes.Percentage;
+import com.github.weisj.jsvg.attributes.ViewBox;
 import com.github.weisj.jsvg.attributes.paint.PaintParser;
 import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.geometry.size.Length;
@@ -43,9 +34,13 @@ import com.github.weisj.jsvg.nodes.filter.Filter;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.parser.css.StyleSheet;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,7 +51,7 @@ public final class AttributeNode {
     private static final Length BottomOrRight = new Length(Unit.PERCENTAGE, 100f);
 
     private final @NotNull String tagName;
-    private final @NotNull Map<String, String> attributes;
+    private @NotNull Map<String, String> attributes;
     private final @Nullable AttributeNode parent;
     private final @NotNull Map<@NotNull String, @NotNull ParsedElement> namedElements;
     private final @NotNull List<@NotNull StyleSheet> styleSheets;
@@ -77,44 +72,45 @@ public final class AttributeNode {
     }
 
     void prepareForNodeBuilding(@NotNull ParsedElement parsedElement) {
-        Map<String, String> styleSheetAttributes = new HashMap<>();
+        List<StyleSheet> sheets = styleSheets;
 
         // First process the inline styles. They have the highest priority.
-        preprocessAttributes(attributes, styleSheetAttributes);
+        Map<String, String> result;
+        String styleStr = attributes.get("style");
+        if (styleStr == null && sheets.isEmpty()) {
+            return;
+        }
 
-        List<StyleSheet> sheets = styleSheets();
+        Map<String, String> styleAttributes = new HashMap<>();
+        if (styleStr != null && !styleStr.isBlank()) {
+            String[] styles = styleStr.split(";");
+            for (String style : styles) {
+                if (style.isBlank()) {
+                    continue;
+                }
+                String[] styleDef = style.split(":", 2);
+                styleAttributes.put(styleDef[0].trim().toLowerCase(Locale.ENGLISH), styleDef[1].trim());
+            }
+        }
+
         // Traverse the style sheets in backwards order to only use the newest definition.
         // FIXME: Only use the newest *valid* definition of a property value.
         for (int i = sheets.size() - 1; i >= 0; i--) {
             StyleSheet sheet = sheets.get(i);
             sheet.forEachMatchingRule(parsedElement, p -> {
-                if (!styleSheetAttributes.containsKey(p.name())) {
-                    styleSheetAttributes.put(p.name(), p.value());
-                }
+                styleAttributes.putIfAbsent(p.name(), p.value());
             });
         }
-        attributes.putAll(styleSheetAttributes);
-    }
-
-    private static boolean isBlank(@NotNull String s) {
-        return s.trim().isEmpty();
-    }
-
-    private static void preprocessAttributes(@NotNull Map<String, String> attributes,
-            @NotNull Map<String, String> styleAttributes) {
-        String styleStr = attributes.get("style");
-        if (styleStr != null && !isBlank(styleStr)) {
-            String[] styles = styleStr.split(";");
-            for (String style : styles) {
-                if (isBlank(style)) continue;
-                String[] styleDef = style.split(":", 2);
-                styleAttributes.put(styleDef[0].trim().toLowerCase(Locale.ENGLISH), styleDef[1].trim());
-            }
+        if (!styleAttributes.isEmpty()) {
+            Map<String, String> newAttributes = new HashMap<>(attributes.size() + styleAttributes.size());
+            newAttributes.putAll(attributes);
+            newAttributes.putAll(styleAttributes);
+            attributes = newAttributes;
         }
     }
 
     @NotNull
-    Map<String, Object> namedElements() {
+    Map<String, ParsedElement> namedElements() {
         return namedElements;
     }
 

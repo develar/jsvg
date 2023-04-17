@@ -21,13 +21,12 @@
  */
 package com.github.weisj.jsvg.attributes.filter;
 
-import java.awt.*;
-import java.awt.image.*;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.github.weisj.jsvg.nodes.filter.FilterContext;
 import com.github.weisj.jsvg.renderer.RenderContext;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.awt.image.*;
 
 public enum EdgeMode {
     Duplicate {

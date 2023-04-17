@@ -23,6 +23,7 @@ package com.github.weisj.jsvg.attributes.paint;
 
 import com.github.weisj.jsvg.attributes.AttributeParser;
 import com.github.weisj.jsvg.parser.AttributeNode;
+import com.github.weisj.jsvg.parser.SeparatorMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

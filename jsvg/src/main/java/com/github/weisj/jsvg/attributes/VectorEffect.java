@@ -32,7 +32,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-
 public enum VectorEffect implements HasMatchName {
     None(0),
     NonScalingStroke("non-scaling-stroke", 0),

@@ -28,6 +28,17 @@ import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.Unit;
 import com.github.weisj.jsvg.parser.AttributeNode;
 import com.github.weisj.jsvg.parser.SeparatorMode;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class AttributeParser {
 
@@ -93,7 +104,7 @@ public final class AttributeParser {
         }
     }
 
-    private double parseDouble(@Nullable String value, double fallback) {
+    private static double parseDouble(@Nullable String value, double fallback) {
         if (value == null) return fallback;
         try {
             return Double.parseDouble(value);

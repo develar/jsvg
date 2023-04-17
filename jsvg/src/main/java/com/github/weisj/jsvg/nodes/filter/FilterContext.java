@@ -21,28 +21,26 @@
  */
 package com.github.weisj.jsvg.nodes.filter;
 
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.github.weisj.jsvg.attributes.UnitType;
 import com.github.weisj.jsvg.attributes.filter.DefaultFilterChannel;
 import com.github.weisj.jsvg.util.ConstantProvider;
 import com.github.weisj.jsvg.util.LazyProvider;
 import com.github.weisj.jsvg.util.Provider;
+import org.jetbrains.annotations.NotNull;
 
-final class FilterContext {
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
+public final class FilterContext {
     private final @NotNull Map<@NotNull Object, @NotNull Provider<Channel>> resultChannels = new HashMap<>();
     private final Filter.FilterInfo info;
     private final @NotNull UnitType primitiveUnits;
     private final @NotNull RenderingHints renderingHints;
 
-    public FilterContext(@NotNull Filter.FilterInfo info, @NotNull UnitType primitiveUnits,
-            @NotNull RenderingHints renderingHints) {
+    FilterContext(@NotNull Filter.FilterInfo info, @NotNull UnitType primitiveUnits,
+                  @NotNull RenderingHints renderingHints) {
         this.info = info;
         this.primitiveUnits = primitiveUnits;
         this.renderingHints = renderingHints;

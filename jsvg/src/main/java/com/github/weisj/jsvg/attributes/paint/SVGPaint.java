@@ -21,7 +21,7 @@
  */
 package com.github.weisj.jsvg.attributes.paint;
 
-import com.github.weisj.jsvg.geometry.size.MeasureContext;
+import com.github.weisj.jsvg.renderer.RenderContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +32,7 @@ public interface SVGPaint {
     SVGPaint NONE = new SVGPaint() {
         @Override
         public void fillShape(@NotNull Graphics2D g, @NotNull RenderContext context, @NotNull Shape shape,
-                @Nullable Rectangle2D bounds) { /* NONE shouldn't fill anything */ }
+                              @Nullable Rectangle2D bounds) { /* NONE shouldn't fill anything */ }
 
         @Override
         public void drawShape(@NotNull Graphics2D g, @NotNull RenderContext context, @NotNull Shape shape,

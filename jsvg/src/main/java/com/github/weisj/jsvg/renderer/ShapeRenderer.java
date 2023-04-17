@@ -111,12 +111,12 @@ public final class ShapeRenderer {
             Graphics2D phaseGraphics = (Graphics2D) g.create();
             RenderContext phaseContext = shapePaintContext.context.deriveForChildGraphics();
             switch (phase) {
-                case FILL:
+                case FILL -> {
                     if (canBeFilledHint) {
                         ShapeRenderer.renderShapeFill(phaseContext, phaseGraphics, paintShape);
                     }
-                    break;
-                case STROKE:
+                }
+                case STROKE -> {
                     Shape strokeShape = paintShape.shape;
                     if (vectorEffects.contains(VectorEffect.NonScalingStroke)
                         && !vectorEffects.contains(VectorEffect.NonScalingSize)) {

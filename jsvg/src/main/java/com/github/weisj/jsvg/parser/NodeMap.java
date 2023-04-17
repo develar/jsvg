@@ -1,6 +1,9 @@
 package com.github.weisj.jsvg.parser;
 
 import com.github.weisj.jsvg.nodes.*;
+import com.github.weisj.jsvg.nodes.animation.Animate;
+import com.github.weisj.jsvg.nodes.animation.AnimateTransform;
+import com.github.weisj.jsvg.nodes.animation.Set;
 import com.github.weisj.jsvg.nodes.filter.*;
 import com.github.weisj.jsvg.nodes.mesh.MeshGradient;
 import com.github.weisj.jsvg.nodes.mesh.MeshPatch;
@@ -23,11 +26,6 @@ public final class NodeMap {
         map.put(Defs.TAG, () -> new Defs());
         map.put(Desc.TAG, () -> new Desc());
         map.put(Ellipse.TAG, () -> new Ellipse());
-        map.put(FeColorMatrix.TAG, () -> new FeColorMatrix());
-        map.put(FeDisplacementMap.TAG, () -> new FeDisplacementMap());
-        map.put(FeGaussianBlur.TAG, () -> new FeGaussianBlur());
-        map.put(FeTurbulence.TAG, () -> new FeTurbulence());
-        map.put(Filter.TAG, () -> new Filter());
         map.put(Group.TAG, () -> new Group());
         map.put(Image.TAG, () -> new Image());
         map.put(Line.TAG, () -> new Line());
@@ -56,8 +54,20 @@ public final class NodeMap {
         map.put(Use.TAG, () -> new Use());
         map.put(View.TAG, () -> new View());
 
+        map.put(Filter.TAG, () -> new Filter());
         map.put(FeBlend.TAG, () -> new FeBlend());
+        map.put(FeColorMatrix.TAG, () -> new FeColorMatrix());
+        map.put(FeDisplacementMap.TAG, () -> new FeDisplacementMap());
         map.put(FeFlood.TAG, () -> new FeFlood());
+        map.put(FeGaussianBlur.TAG, () -> new FeGaussianBlur());
+        map.put(FeMerge.TAG, () -> new FeMerge());
+        map.put(FeMergeNode.TAG, () -> new FeMergeNode());
+        map.put(FeTurbulence.TAG, () -> new FeTurbulence());
+        map.put(FeOffset.TAG, () -> new FeOffset());
+
+        map.put(Animate.TAG, () -> new Animate());
+        map.put(AnimateTransform.TAG, () -> new AnimateTransform());
+        map.put(Set.TAG, () -> new Set());
 
         map.put("feComponentTransfer", () -> new DummyFilterPrimitive("feComponentTransfer"));
         map.put("feComposite", () -> new DummyFilterPrimitive("feComposite"));
@@ -70,9 +80,7 @@ public final class NodeMap {
         map.put("feFuncG", () -> new DummyFilterPrimitive("feFuncG"));
         map.put("feFuncR", () -> new DummyFilterPrimitive("feFuncR"));
         map.put("feImage", () -> new DummyFilterPrimitive("feImage"));
-        map.put("feMerge", () -> new DummyFilterPrimitive("feMerge"));
         map.put("feMorphology", () -> new DummyFilterPrimitive("feMorphology"));
-        map.put("feOffset", () -> new DummyFilterPrimitive("feOffset"));
         map.put("feSpecularLighting", () -> new DummyFilterPrimitive("feSpecularLighting"));
         map.put("feTile", () -> new DummyFilterPrimitive("feTile"));
 

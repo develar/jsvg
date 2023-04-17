@@ -22,6 +22,7 @@
 package com.github.weisj.jsvg.attributes;
 
 import com.github.weisj.jsvg.geometry.size.FloatSize;
+import com.github.weisj.jsvg.parser.SeparatorMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

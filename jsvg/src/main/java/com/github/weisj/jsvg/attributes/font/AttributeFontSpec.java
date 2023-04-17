@@ -27,9 +27,8 @@ import com.github.weisj.jsvg.nodes.prototype.Mutator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class AttributeFontSpec extends FontSpec implements Mutator<MeasurableFontSpec> {
-    private final @Nullable FontSize size;
-    private final @Nullable FontWeight weight;
+import java.util.List;
+import java.util.Objects;
 
 public final class AttributeFontSpec extends FontSpec implements Mutator<MeasurableFontSpec> {
     final @Nullable FontSize size;

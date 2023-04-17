@@ -29,7 +29,6 @@ import com.google.errorprone.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,7 +47,7 @@ public final class MeasurableFontSpec extends FontSpec {
 
     public static @NotNull MeasurableFontSpec createDefault() {
         return new MeasurableFontSpec(
-                Collections.singletonList(DEFAULT_FONT_FAMILY_NAME),
+                List.of(DEFAULT_FONT_FAMILY_NAME),
                 FontStyle.normal(),
                 null,
                 FontStretch.Normal.percentage(),

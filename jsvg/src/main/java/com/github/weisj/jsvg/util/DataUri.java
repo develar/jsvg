@@ -21,6 +21,9 @@
  */
 package com.github.weisj.jsvg.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -28,9 +31,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Copyright (c) 2013 ooxi
@@ -151,7 +151,7 @@ final class DataUri {
 
         // Let supportedContentEncodings be an array of strings
         // representing the supported content encodings. (["base64"] for example)
-        Collection<String> supportedContentEncodings = Collections.singletonList("base64");
+        Collection<String> supportedContentEncodings = List.of("base64");
 
         // Let mimeType be a string with the value "text/plain".
         String mimeType = "text/plain";
