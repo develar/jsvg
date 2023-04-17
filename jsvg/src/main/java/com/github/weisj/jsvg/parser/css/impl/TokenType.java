@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Jannis Weis
+ * Copyright (c) 2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,8 +19,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.weisj.jsvg.attributes;
+package com.github.weisj.jsvg.parser.css.impl;
 
-public @interface Mapped {
-    String to();
+public enum TokenType {
+    CURLY_OPEN,
+    CURLY_CLOSE,
+    COLON,
+    COMMA,
+    SEMICOLON,
+    RAW_DATA,
+    CLASS_NAME,
+    ID_NAME,
+    IDENTIFIER,
+    EOF
 }

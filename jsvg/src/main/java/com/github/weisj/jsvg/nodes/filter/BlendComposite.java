@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Jannis Weis
+ * Copyright (c) 2022-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -39,7 +39,7 @@ package com.github.weisj.jsvg.nodes.filter;
  * 3. The name of the author may not be used to endorse or promote products derived from this
  * software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
  * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
  * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
@@ -112,13 +112,13 @@ public final class BlendComposite implements Composite {
     }
 
     private static boolean isColorModelInvalid(ColorModel cm) {
-        if ((cm instanceof DirectColorModel) && (cm.getTransferType() == DataBuffer.TYPE_INT)) {
+        if (cm instanceof DirectColorModel && cm.getTransferType() == DataBuffer.TYPE_INT) {
             DirectColorModel directCM = (DirectColorModel) cm;
 
-            return !((directCM.getRedMask() == 0x00FF0000)
-                    && (directCM.getGreenMask() == 0x0000FF00)
-                    && (directCM.getBlueMask() == 0x000000FF)
-                    && ((directCM.getNumComponents() != 4) || (directCM.getAlphaMask() == 0xFF000000)));
+            return !(directCM.getRedMask() == 0x00FF0000
+                    && directCM.getGreenMask() == 0x0000FF00
+                    && directCM.getBlueMask() == 0x000000FF
+                    && (directCM.getNumComponents() != 4 || directCM.getAlphaMask() == 0xFF000000));
         }
         return true;
     }
@@ -183,7 +183,7 @@ public final class BlendComposite implements Composite {
         }
     }
 
-    private static abstract class Blender {
+    private abstract static class Blender {
         protected abstract void blend(int[] src, int[] dst, int[] result);
 
         static Blender forBlendMode(BlendMode blendMode) {

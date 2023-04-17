@@ -21,9 +21,18 @@
  */
 package com.github.weisj.jsvg.parser;
 
-import com.github.weisj.jsvg.attributes.AttributeParser;
-import com.github.weisj.jsvg.attributes.Percentage;
-import com.github.weisj.jsvg.attributes.ViewBox;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.github.weisj.jsvg.attributes.*;
 import com.github.weisj.jsvg.attributes.paint.PaintParser;
 import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.geometry.size.Length;
@@ -33,9 +42,7 @@ import com.github.weisj.jsvg.nodes.Mask;
 import com.github.weisj.jsvg.nodes.filter.Filter;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.github.weisj.jsvg.parser.css.StyleSheet;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -52,34 +59,68 @@ public final class AttributeNode {
     private final @NotNull Map<String, String> attributes;
     private final @Nullable AttributeNode parent;
     private final @NotNull Map<@NotNull String, @NotNull ParsedElement> namedElements;
+    private final @NotNull List<@NotNull StyleSheet> styleSheets;
 
     private final @NotNull LoadHelper loadHelper;
 
     public AttributeNode(@NotNull String tagName, @NotNull Map<String, String> attributes,
-            @Nullable AttributeNode parent, @NotNull Map<@NotNull String, @NotNull ParsedElement> namedElements,
+            @Nullable AttributeNode parent,
+            @NotNull Map<@NotNull String, @NotNull ParsedElement> namedElements,
+            @NotNull List<@NotNull StyleSheet> styleSheets,
             @NotNull LoadHelper loadHelper) {
         this.tagName = tagName;
-        this.attributes = preprocessAttributes(attributes);
+        this.attributes = attributes;
         this.parent = parent;
         this.namedElements = namedElements;
+        this.styleSheets = styleSheets;
         this.loadHelper = loadHelper;
+    }
+
+    void prepareForNodeBuilding(@NotNull ParsedElement parsedElement) {
+        Map<String, String> styleSheetAttributes = new HashMap<>();
+
+        // First process the inline styles. They have the highest priority.
+        preprocessAttributes(attributes, styleSheetAttributes);
+
+        List<StyleSheet> sheets = styleSheets();
+        // Traverse the style sheets in backwards order to only use the newest definition.
+        // FIXME: Only use the newest *valid* definition of a property value.
+        for (int i = sheets.size() - 1; i >= 0; i--) {
+            StyleSheet sheet = sheets.get(i);
+            sheet.forEachMatchingRule(parsedElement, p -> {
+                if (!styleSheetAttributes.containsKey(p.name())) {
+                    styleSheetAttributes.put(p.name(), p.value());
+                }
+            });
+        }
+        attributes.putAll(styleSheetAttributes);
     }
 
     private static boolean isBlank(@NotNull String s) {
         return s.trim().isEmpty();
     }
 
-    private static @NotNull Map<String, String> preprocessAttributes(@NotNull Map<String, String> attributes) {
+    private static void preprocessAttributes(@NotNull Map<String, String> attributes,
+            @NotNull Map<String, String> styleAttributes) {
         String styleStr = attributes.get("style");
         if (styleStr != null && !isBlank(styleStr)) {
             String[] styles = styleStr.split(";");
             for (String style : styles) {
                 if (isBlank(style)) continue;
                 String[] styleDef = style.split(":", 2);
-                attributes.put(styleDef[0].trim().toLowerCase(Locale.ENGLISH), styleDef[1].trim());
+                styleAttributes.put(styleDef[0].trim().toLowerCase(Locale.ENGLISH), styleDef[1].trim());
             }
         }
-        return attributes;
+    }
+
+    @NotNull
+    Map<String, Object> namedElements() {
+        return namedElements;
+    }
+
+    @NotNull
+    List<@NotNull StyleSheet> styleSheets() {
+        return styleSheets;
     }
 
     private <T> @Nullable T getElementById(@NotNull Class<T> type, @Nullable String id) {
@@ -246,12 +287,12 @@ public final class AttributeNode {
     }
 
     public List<String> getStringList(@NotNull String name) {
-        return getStringList(name, false);
+        return getStringList(name, SeparatorMode.COMMA_AND_WHITESPACE);
     }
 
 
-    public List<String> getStringList(@NotNull String name, boolean requireComma) {
-        return loadHelper.attributeParser().parseStringList(getValue(name), requireComma);
+    public List<String> getStringList(@NotNull String name, SeparatorMode separatorMode) {
+        return loadHelper.attributeParser().parseStringList(getValue(name), separatorMode);
     }
 
     public float getFloat(@NotNull String name, float fallback) {

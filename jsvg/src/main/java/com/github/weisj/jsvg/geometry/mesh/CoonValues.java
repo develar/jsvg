@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -34,5 +34,15 @@ public final class CoonValues {
         this.east = east;
         this.south = south;
         this.west = west;
+    }
+
+    @Override
+    public String toString() {
+        return "CoonValues{" +
+                "north=" + north +
+                ", east=" + east +
+                ", south=" + south +
+                ", west=" + west +
+                '}';
     }
 }

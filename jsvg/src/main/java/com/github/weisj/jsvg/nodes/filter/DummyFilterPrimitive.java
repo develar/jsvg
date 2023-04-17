@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Jannis Weis
+ * Copyright (c) 2022-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -21,10 +21,10 @@
  */
 package com.github.weisj.jsvg.nodes.filter;
 
-import java.awt.*;
-
 import org.jetbrains.annotations.NotNull;
 
+import com.github.weisj.jsvg.nodes.animation.Animate;
+import com.github.weisj.jsvg.nodes.animation.Set;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
@@ -32,9 +32,9 @@ import com.github.weisj.jsvg.renderer.RenderContext;
 
 @ElementCategories(Category.FilterPrimitive)
 @PermittedContent(
-    anyOf = { /* <animate>, <set> */ }
+    anyOf = {Animate.class, Set.class}
 )
-public final class DummyFilterPrimitive extends FilterPrimitive {
+public final class DummyFilterPrimitive extends AbstractFilterPrimitive {
 
     private final @NotNull String tag;
 
@@ -48,8 +48,7 @@ public final class DummyFilterPrimitive extends FilterPrimitive {
     }
 
     @Override
-    public void applyFilter(@NotNull Graphics2D g, @NotNull RenderContext context,
-            @NotNull FilterContext filterContext) {
-        saveResult(inputChannel(filterContext), filterContext);
+    public void applyFilter(@NotNull RenderContext context, @NotNull FilterContext filterContext) {
+        impl().saveResult(impl().inputChannel(filterContext), filterContext);
     }
 }

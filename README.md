@@ -2,6 +2,7 @@
 [![Code Style](https://github.com/weisJ/jsvg/actions/workflows/spotless.yml/badge.svg)](https://github.com/weisJ/jsvg/actions/workflows/spotless.yml)
 [![CI](https://github.com/weisJ/jsvg/actions/workflows/gradle.yml/badge.svg)](https://github.com/weisJ/jsvg/actions/workflows/gradle.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.weisj/jsvg?label=Maven%20Central)](https://search.maven.org/artifact/com.github.weisj/jsvg)
+
 # JSVG - A Java SVG implementation
 
 <p align="center">
@@ -21,14 +22,17 @@ This library aims to be as lightweight as possible. Generally JSVG uses ~50% les
 ~98% less than Batik.
 
 ## How to use
+
 The library is available on maven central:
+
 ````kotlin
 dependencies {
     implementation("com.github.weisj:jsvg:0.0.9")
 }
 ````
 
-Also nightly snapshot builds will be release to maven:
+Also, nightly snapshot builds will be released to maven:
+
 ````kotlin
 repositories {
     maven {
@@ -44,23 +48,55 @@ dependencies {
     implementation("com.github.weisj:jsvg:latest.integration")
 }
 ````
-To load an svg icon you can use the [`SVGLoader`](https://github.com/weisJ/jsvg/blob/master/jsvg/src/main/java/com/github/weisj/jsvg/parser/SVGLoader.java)
-class. It will produce an [`SVGDocument`](https://github.com/weisJ/jsvg/blob/master/jsvg/src/main/java/com/github/weisj/jsvg/SVGDocument.java) which
-can be rendered to any `Graphics2D` object you like (e.g. a `BufferedImage` or a swing component).
+
+### Loading
+To load an svg icon you can use
+the [`SVGLoader`](https://github.com/weisJ/jsvg/blob/master/jsvg/src/main/java/com/github/weisj/jsvg/parser/SVGLoader.java)
+class. It will produce
+an [`SVGDocument`](https://github.com/weisJ/jsvg/blob/master/jsvg/src/main/java/com/github/weisj/jsvg/SVGDocument.java)
+
+````java
+SVGLoader loader = new SVGLoader();
+URL svgUrl = MyClass.class.getResource("mySvgFile.svg");
+SVGDocument svgDocument = loader.load(svgUrl);
+````
+Note that `SVGLoader` is not guaranteed to be thread safe hence shouldn't be used across multiple threads.
+
+### Rendering
+An `SVGDocument` can be rendered to any `Graphics2D` object you like e.g. a `BufferedImage` 
+````java
+FloatSize size = svgDocument.size();
+BufferedImage image = new BufferedImage((int) size.width, (int) size.height);
+Graphics2D g = image.createGraphics();
+svgDocument.render(null, g);
+g.dispose();
+````
+or a swing component
+````java
+class MyComponent extends JComponent {
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        svgDocument.render(this, (Graphics2D) g, new ViewBox(0, 0, getWidth(), getHeight()));
+    }
+}
+````
 
 ## Supported features
 
 For supported elements most of the attributes which apply to them are implemented.
 
 - :white_check_mark:: The element is supported. Note that this doesn't mean that every attribute is supported.
-- (:white_check_mark:): The element is supported, but won't have any effect (e.g. it's currently not possible to query the content of a `<desc>` element)
-- :ballot_box_with_check:: The element is partially implemented and might not support most basic features of the element.
+- (:white_check_mark:): The element is supported, but won't have any effect (e.g. it's currently not possible to query
+  the content of a `<desc>` element)
+- :ballot_box_with_check:: The element is partially implemented and might not support most basic features of the
+  element.
 - :x:: The element is currently not supported
 - :warning:: The element is deprecated in the spec and has a low priority of getting implemented.
 - :test_tube:: The element is an experimental part of the svg 2.* spec. It may not fully behave as expected.
 
-
 ## Shape and container elements
+
 | Element       | Status               |
 |---------------|----------------------|
 | a             | :white_check_mark:   |
@@ -84,6 +120,7 @@ For supported elements most of the attributes which apply to them are implemente
 | view          | (:white_check_mark:) |
 
 ## Paint server elements
+
 | Element                 | Status             |
 |-------------------------|--------------------|
 | linearGradient          | :white_check_mark: |
@@ -96,6 +133,7 @@ For supported elements most of the attributes which apply to them are implemente
 | stop                    | :white_check_mark: |
 
 ## Text elements
+
 | Element       | Status             |
 |---------------|--------------------|
 | text          | :white_check_mark: |
@@ -104,6 +142,7 @@ For supported elements most of the attributes which apply to them are implemente
 | tspan         | :white_check_mark: |
 
 ## Animation elements
+
 | Element               | Status |
 |-----------------------|--------|
 | animate               | :x:    |
@@ -115,6 +154,7 @@ For supported elements most of the attributes which apply to them are implemente
 | switch                | :x:    |
 
 ## Filter elements
+
 | Element             | Status                  |
 |---------------------|-------------------------|
 | feBlend             | :white_check_mark:      |
@@ -132,10 +172,10 @@ For supported elements most of the attributes which apply to them are implemente
 | feFuncR             | :x:                     |
 | feGaussianBlur      | :white_check_mark:      |
 | feImage             | :x:                     |
-| feMerge             | :x:                     |
-| feMergeNode         | :x:                     |
+| feMerge             | :white_check_mark:      |
+| feMergeNode         | :white_check_mark:      |
 | feMorphology        | :x:                     |
-| feOffset            | :x:                     |
+| feOffset            | :white_check_mark:      |
 | fePointLight        | :x:                     |
 | feSpecularLighting  | :x:                     |
 | feSpotLight         | :x:                     |
@@ -144,6 +184,7 @@ For supported elements most of the attributes which apply to them are implemente
 | filter              | :ballot_box_with_check: |
 
 ### Font elements
+
 | Element                   | Status |
 |---------------------------|--------|
 | :warning:altGlyph         | :x:    |
@@ -162,6 +203,7 @@ For supported elements most of the attributes which apply to them are implemente
 | :warning:vkern            | :x:    |
 
 ## Other elements
+
 | Element         | Status               |
 |-----------------|----------------------|
 | desc            | (:white_check_mark:) |

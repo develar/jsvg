@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -33,17 +33,21 @@ import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.nodes.SVGNode;
+import com.github.weisj.jsvg.nodes.animation.Animate;
+import com.github.weisj.jsvg.nodes.animation.AnimateTransform;
+import com.github.weisj.jsvg.nodes.animation.Set;
 import com.github.weisj.jsvg.nodes.container.ContainerNode;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.NotImplemented;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
 import com.github.weisj.jsvg.parser.AttributeNode;
+import com.github.weisj.jsvg.renderer.RenderContext;
 
 @ElementCategories(Category.Gradient)
 @PermittedContent(
     categories = Category.Descriptive,
-    anyOf = {MeshRow.class /* <animate>, <animateTransform>, <script>, <set> */}
+    anyOf = {MeshRow.class, Animate.class, AnimateTransform.class, Set.class /* <script> */ }
 )
 public final class MeshGradient extends ContainerNode implements SVGPaint {
     public static final String TAG = "meshgradient";
@@ -87,24 +91,24 @@ public final class MeshGradient extends ContainerNode implements SVGPaint {
     }
 
     @Override
-    public void fillShape(@NotNull Graphics2D g, @NotNull MeasureContext measure, @NotNull Shape shape,
+    public void fillShape(@NotNull Graphics2D g, @NotNull RenderContext context, @NotNull Shape shape,
             @Nullable Rectangle2D bounds) {
         Shape clip = g.getClip();
         Rectangle2D b = bounds != null ? bounds : shape.getBounds2D();
         g.setClip(shape);
         g.translate(b.getX(), b.getY());
-        renderMesh(measure, g);
+        renderMesh(context.measureContext(), g);
         g.setClip(clip);
     }
 
     @Override
-    public void drawShape(@NotNull Graphics2D g, @NotNull MeasureContext measure, @NotNull Shape shape,
+    public void drawShape(@NotNull Graphics2D g, @NotNull RenderContext context, @NotNull Shape shape,
             @Nullable Rectangle2D bounds) {
         Shape clip = g.getClip();
         Rectangle2D b = bounds != null ? bounds : shape.getBounds2D();
         g.setClip(g.getStroke().createStrokedShape(shape));
         g.translate(b.getX(), b.getY());
-        renderMesh(measure, g);
+        renderMesh(context.measureContext(), g);
         g.setClip(clip);
     }
 }

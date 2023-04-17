@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -42,6 +42,7 @@ public final class ParsedElement {
     private final @Nullable String id;
     private final @NotNull AttributeNode attributeNode;
     private final @NotNull SVGNode node;
+
     private final @NotNull List<@NotNull ParsedElement> children = new ArrayList<>();
     final CharacterDataParser characterDataParser;
     private @NotNull BuildStatus buildStatus = BuildStatus.NO;
@@ -100,6 +101,9 @@ public final class ParsedElement {
             return;
         }
         buildStatus = BuildStatus.BUILDING;
+
+        attributeNode.prepareForNodeBuilding(this);
+
         // Build depth first to ensure child nodes are processed first.
         // e.g. LinearGradient depends on its stops to be build first.
         for (ParsedElement child : children) {

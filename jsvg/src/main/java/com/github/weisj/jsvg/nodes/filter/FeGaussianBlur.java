@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -22,7 +22,6 @@
 package com.github.weisj.jsvg.nodes.filter;
 
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 
@@ -30,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.attributes.filter.EdgeMode;
 import com.github.weisj.jsvg.geometry.util.GeometryUtil;
+import com.github.weisj.jsvg.nodes.animation.Animate;
+import com.github.weisj.jsvg.nodes.animation.Set;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
@@ -38,9 +39,9 @@ import com.github.weisj.jsvg.renderer.RenderContext;
 
 @ElementCategories(Category.FilterPrimitive)
 @PermittedContent(
-    anyOf = { /* <animate>, <set> */ }
+    anyOf = {Animate.class, Set.class}
 )
-public final class FeGaussianBlur extends FilterPrimitive {
+public final class FeGaussianBlur extends AbstractFilterPrimitive {
     public static final String TAG = "fegaussianblur";
 
     private float[] stdDeviation;
@@ -48,8 +49,9 @@ public final class FeGaussianBlur extends FilterPrimitive {
 
     private double xCurrent;
     private double yCurrent;
-    private ImageFilter xBlur;
-    private ImageFilter yBlur;
+    private Kernel xBlur;
+    private Kernel yBlur;
+    private final Kernel[] kernels = new Kernel[2];
 
     @Override
     public @NotNull String tagName() {
@@ -65,30 +67,32 @@ public final class FeGaussianBlur extends FilterPrimitive {
 
 
     @Override
-    public void applyFilter(@NotNull Graphics2D g, @NotNull RenderContext context,
-            @NotNull FilterContext filterContext) {
+    public void applyFilter(@NotNull RenderContext context, @NotNull FilterContext filterContext) {
         if (stdDeviation.length == 0) return;
 
-        Filter.FilterInfo filterInfo = filterContext.info();
-        AffineTransform at = filterInfo.graphics().getTransform();
+        // TODO: Use proper transform here
+        AffineTransform at = filterContext.info().graphics().getTransform();
         double xSigma = GeometryUtil.scaleXOfTransform(at) * stdDeviation[0];
         double ySigma = GeometryUtil.scaleYOfTransform(at) * stdDeviation[Math.min(stdDeviation.length - 1, 1)];
 
         if (xSigma < 0 || ySigma < 0) return;
 
-        ImageProducer input = inputChannel(filterContext).producer();
+        ImageProducer input = impl().inputChannel(filterContext).producer();
 
+        int kernelCount = 0;
         if (xSigma > 0) {
-            input = new FilteredImageSource(input, createGaussianBlurFilter(g, xSigma, true));
+            kernels[kernelCount++] = createConvolveKernel(xSigma, true);
         }
         if (ySigma > 0) {
-            input = new FilteredImageSource(input, createGaussianBlurFilter(g, ySigma, false));
+            kernels[kernelCount++] = createConvolveKernel(ySigma, false);
         }
 
-        saveResult(new ImageProducerChannel(input), filterContext);
+        ImageProducer output = edgeMode.convolve(context, filterContext, input, kernels, kernelCount);
+        impl().saveResult(new ImageProducerChannel(output), filterContext);
     }
 
-    private @NotNull ImageFilter createGaussianBlurFilter(@NotNull Graphics2D g, double sigma, boolean horizontal) {
+
+    private @NotNull Kernel createConvolveKernel(double sigma, boolean horizontal) {
         double radius = 2f * sigma + 1;
         int size = (int) Math.ceil(radius) + 1;
         if (horizontal && xBlur != null && xCurrent == sigma) return xBlur;
@@ -126,11 +130,9 @@ public final class FeGaussianBlur extends FilterPrimitive {
         }
 
         if (horizontal) {
-            xBlur = new BufferedImageFilter(
-                    new ConvolveOp(new Kernel(size, 1, data), edgeMode.awtCode(), g.getRenderingHints()));
+            xBlur = new Kernel(size, 1, data);
         } else {
-            yBlur = new BufferedImageFilter(
-                    new ConvolveOp(new Kernel(1, size, data), edgeMode.awtCode(), g.getRenderingHints()));
+            yBlur = new Kernel(1, size, data);
         }
 
         return horizontal ? xBlur : yBlur;

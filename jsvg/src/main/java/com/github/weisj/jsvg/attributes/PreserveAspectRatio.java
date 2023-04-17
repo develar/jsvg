@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -137,25 +137,25 @@ public final class PreserveAspectRatio {
     public enum MeetOrSlice {
         /**
          * Scale the graphic such that:
-         *
+         * <p>
          * - aspect ratio is preserved
          * - the entire viewBox is visible within the viewport
          * - the viewBox is scaled up as much as possible, while still meeting the other criteria
-         *
+         * <p>
          * In this case, if the aspect ratio of the graphic does not match the viewport,
-         * some of the viewport will extend beyond the bounds of the viewBox
+         * some viewport will extend beyond the bounds of the viewBox
          * (i.e., the area into which the viewBox will draw will be smaller than the viewport).
          */
         @Default
         Meet,
         /**
          * Scale the graphic such that:
-         *
+         * <p>
          * - aspect ratio is preserved
          * - the entire viewport is covered by the viewBox
          * - the viewBox is scaled down as much as possible, while still meeting the other criteria
-         *
-         * In this case, if the aspect ratio of the viewBox does not match the viewport, some of the
+         * <p>
+         * In this case, if the aspect ratio of the viewBox does not match the viewport, some
          * viewBox will extend beyond the bounds of the viewport
          * (i.e., the area into which the viewBox will draw is larger than the viewport).
          */
@@ -186,7 +186,8 @@ public final class PreserveAspectRatio {
         if (preserveAspectRation == null) {
             return fallback != null ? fallback : new PreserveAspectRatio(align, meetOrSlice);
         }
-        List<String> components = parser.parseStringList(preserveAspectRation, false);
+        List<String> components =
+                parser.parseStringList(preserveAspectRation, SeparatorMode.COMMA_AND_WHITESPACE);
         if (components.size() < 1 || components.size() > 2) {
             throw new IllegalArgumentException("Too many arguments specified: " + preserveAspectRation);
         }
@@ -209,6 +210,7 @@ public final class PreserveAspectRatio {
         return Objects.hash(align, meetOrSlice);
     }
 
+    // https://www.w3.org/TR/SVG2/coords.html#ComputingAViewportsTransform
     public @NotNull AffineTransform computeViewPortTransform(@NotNull FloatSize size, @NotNull ViewBox viewBox) {
         AffineTransform viewTransform = new AffineTransform();
         if (align == Align.None) {

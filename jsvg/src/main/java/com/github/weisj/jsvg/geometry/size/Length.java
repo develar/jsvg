@@ -74,6 +74,8 @@ public final class Length {
                 return (1f / 6f) * pixelsPerInch * value;
             case EM:
                 return context.em() * value;
+            case REM:
+                return context.rem() * value;
             case EX:
                 return context.ex() * value;
             default:
@@ -108,7 +110,7 @@ public final class Length {
     }
 
     /**
-     * Used for resolving lengths which are neither used as y/x-coordinates or width/height values.
+     * Used for resolving lengths which are neither used as y/x-coordinates nor width/height values.
      * Relative sizes are relative to the {@link ViewBox#normedDiagonalLength()}.
      * @param context the measuring context.
      * @return the resolved size.

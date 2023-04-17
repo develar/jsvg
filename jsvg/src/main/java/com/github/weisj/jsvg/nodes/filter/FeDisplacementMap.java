@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -31,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.attributes.filter.ColorChannel;
 import com.github.weisj.jsvg.attributes.filter.DefaultFilterChannel;
+import com.github.weisj.jsvg.nodes.animation.Animate;
+import com.github.weisj.jsvg.nodes.animation.Set;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
@@ -40,9 +42,9 @@ import com.github.weisj.jsvg.util.ImageUtil;
 
 @ElementCategories(Category.FilterPrimitive)
 @PermittedContent(
-    anyOf = { /* <animate>, <set> */ }
+    anyOf = {Animate.class, Set.class}
 )
-public final class FeDisplacementMap extends FilterPrimitive {
+public final class FeDisplacementMap extends AbstractFilterPrimitive {
     public static final String TAG = "fedisplacementmap";
 
     private ColorChannel xChannelSelector;
@@ -70,16 +72,14 @@ public final class FeDisplacementMap extends FilterPrimitive {
     }
 
     @Override
-    public void applyFilter(@NotNull Graphics2D g, @NotNull RenderContext context,
-            @NotNull FilterContext filterContext) {
+    public void applyFilter(@NotNull RenderContext context, @NotNull FilterContext filterContext) {
         if (scale == 0) return;
-        Channel input = inputChannel(filterContext);
+        Channel input = impl().inputChannel(filterContext);
         Channel displacementInput = filterContext.getChannel(inputChannel2);
-        if (displacementInput == null) return;
 
         ImageFilter displacementFilter = new BufferedImageFilter(
                 new DisplacementOp(displacementInput.pixels(context), filterContext.info().tile()));
-        saveResult(input.applyFilter(displacementFilter), filterContext);
+        impl().saveResult(input.applyFilter(displacementFilter), filterContext);
     }
 
     private final class DisplacementOp implements BufferedImageOp {

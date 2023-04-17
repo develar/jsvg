@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -75,7 +75,7 @@ public final class DefaultPaintParser implements PaintParser {
                 boolean isRgba = value.length() > 4 && (value.charAt(3) == 'a' || value.charAt(3) == 'A');
                 int startIndex = isRgba ? 5 : 4;
                 List<String> values = node.parser().parseStringList(
-                        value.substring(startIndex, value.length() - 1), false);
+                        value.substring(startIndex, value.length() - 1), SeparatorMode.COMMA_AND_WHITESPACE);
                 isRgba = isRgba && values.size() >= 4;
                 AttributeParser parser = node.parser();
                 return new Color(

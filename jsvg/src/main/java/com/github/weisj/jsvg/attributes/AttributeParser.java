@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -27,17 +27,7 @@ import com.github.weisj.jsvg.geometry.size.AngleUnit;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.Unit;
 import com.github.weisj.jsvg.parser.AttributeNode;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.github.weisj.jsvg.parser.SeparatorMode;
 
 public final class AttributeParser {
 
@@ -132,7 +122,7 @@ public final class AttributeParser {
 
     public Length[] parseLengthList(@Nullable String value) {
         if (value != null && value.equalsIgnoreCase("none")) return new Length[0];
-        List<String> values = parseStringList(value, false);
+        List<String> values = parseStringList(value, SeparatorMode.COMMA_AND_WHITESPACE);
         Length[] ret = new Length[values.size()];
         for (int i = 0; i < ret.length; i++) {
             Length length = parseLength(values.get(i), null);
@@ -143,7 +133,7 @@ public final class AttributeParser {
     }
 
     public float[] parseFloatList(@Nullable String value) {
-        List<String> values = parseStringList(value, false);
+        List<String> values = parseStringList(value, SeparatorMode.COMMA_AND_WHITESPACE);
         float[] ret = new float[values.size()];
         for (int i = 0; i < ret.length; i++) {
             ret[i] = parseFloat(values.get(i), 0);
@@ -152,7 +142,7 @@ public final class AttributeParser {
     }
 
     public double[] parseDoubleList(@Nullable String value) {
-        List<String> values = parseStringList(value, false);
+        List<String> values = parseStringList(value, SeparatorMode.COMMA_AND_WHITESPACE);
         double[] ret = new double[values.size()];
         for (int i = 0; i < ret.length; i++) {
             ret[i] = parseDouble(values.get(i), 0);
@@ -160,7 +150,7 @@ public final class AttributeParser {
         return ret;
     }
 
-    public List<String> parseStringList(@Nullable String value, boolean requireComma) {
+    public List<String> parseStringList(@Nullable String value, SeparatorMode separatorMode) {
         if (value == null || value.isEmpty()) return Collections.emptyList();
         List<String> list = new ArrayList<>();
         int max = value.length();
@@ -170,7 +160,7 @@ public final class AttributeParser {
         for (; i < max; i++) {
             char c = value.charAt(i);
             if (Character.isWhitespace(c)) {
-                if (!inWhiteSpace && !requireComma && (i - start) > 0) {
+                if (!inWhiteSpace && separatorMode != SeparatorMode.COMMA_ONLY && i - start > 0) {
                     list.add(value.substring(start, i));
                     start = i + 1;
                 }
@@ -178,12 +168,12 @@ public final class AttributeParser {
                 continue;
             }
             inWhiteSpace = false;
-            if (c == ',') {
+            if (c == ',' && separatorMode != SeparatorMode.WHITESPACE_ONLY) {
                 list.add(value.substring(start, i));
                 start = i + 1;
             }
         }
-        if ((i - start) > 0) list.add(value.substring(start, i));
+        if (i - start > 0) list.add(value.substring(start, i));
         return list;
     }
 

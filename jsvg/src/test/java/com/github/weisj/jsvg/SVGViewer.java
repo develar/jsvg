@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -39,7 +39,9 @@ import com.github.weisj.jsvg.attributes.ViewBox;
 import com.github.weisj.jsvg.parser.SVGLoader;
 import com.kitfox.svg.app.beans.SVGIcon;
 
-public class SVGViewer {
+public final class SVGViewer {
+
+    private SVGViewer() {}
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -47,7 +49,7 @@ public class SVGViewer {
             JFrame frame = new JFrame("SVGViewer");
 
             JComboBox<String> iconBox = new JComboBox<>(new DefaultComboBoxModel<>(findIcons()));
-            iconBox.setSelectedItem("paint/currentColor.svg");
+            iconBox.setSelectedItem("test.svg");
 
             SVGPanel svgPanel = new SVGPanel((String) Objects.requireNonNull(iconBox.getSelectedItem()));
             svgPanel.setPreferredSize(new Dimension(1000, 600));
@@ -108,7 +110,7 @@ public class SVGViewer {
         BATIK
     }
 
-    private static class SVGPanel extends JPanel {
+    private static final class SVGPanel extends JPanel {
         private final Map<String, SVGDocument> iconCache = new HashMap<>();
         private SVGDocument document;
         private String selectedIconName;
@@ -134,39 +136,31 @@ public class SVGViewer {
 
         private void printMemory() {
             switch (mode) {
-                case JSVG:
-                    System.out.println(mode + " Memory: "
-                            + SizeOf.newInstance().deepSizeOf(document));
-                    break;
-                case SVG_SALAMANDER:
-                    System.out.println(mode + " Memory: "
-                            + SizeOf.newInstance().deepSizeOf(icon.getSvgUniverse().getDiagram(icon.getSvgURI())));
-                    break;
-                case BATIK:
-                    System.out.println(mode + " Memory: "
-                            + SizeOf.newInstance().deepSizeOf(jsvgCanvas.getSVGDocument()));
-                    break;
+                case JSVG -> System.out.println(mode + " Memory: "
+                        + SizeOf.newInstance().deepSizeOf(document));
+                case SVG_SALAMANDER -> System.out.println(mode + " Memory: "
+                        + SizeOf.newInstance().deepSizeOf(icon.getSvgUniverse().getDiagram(icon.getSvgURI())));
+                case BATIK -> System.out.println(mode + " Memory: "
+                        + SizeOf.newInstance().deepSizeOf(jsvgCanvas.getSVGDocument()));
             }
         }
 
         private void selectIcon(@NotNull String name) {
             remove(jsvgCanvas);
             switch (mode) {
-                case JSVG:
-                    document = iconCache.computeIfAbsent(name, n -> {
-                        URL url = Objects.requireNonNull(SVGViewer.class.getResource(n));
-                        SVGLoader loader = new SVGLoader();
-                        return loader.load(url);
-                    });
-                    break;
-                case SVG_SALAMANDER:
+                case JSVG -> document = iconCache.computeIfAbsent(name, n -> {
+                    URL url = Objects.requireNonNull(SVGViewer.class.getResource(n));
+                    SVGLoader loader = new SVGLoader();
+                    return loader.load(url);
+                });
+                case SVG_SALAMANDER -> {
                     try {
                         icon.setSvgURI(Objects.requireNonNull(SVGViewer.class.getResource(name)).toURI());
                     } catch (URISyntaxException e) {
                         throw new IllegalStateException(e);
                     }
-                    break;
-                case BATIK:
+                }
+                case BATIK -> {
                     add(jsvgCanvas);
                     try {
                         jsvgCanvas.setURI(
@@ -174,7 +168,7 @@ public class SVGViewer {
                     } catch (URISyntaxException e) {
                         throw new RuntimeException(e);
                     }
-                    break;
+                }
             }
             this.selectedIconName = name;
             repaint();

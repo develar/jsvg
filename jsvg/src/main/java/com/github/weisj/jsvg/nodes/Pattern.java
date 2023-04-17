@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -141,30 +141,26 @@ public final class Pattern extends BaseInnerViewContainer implements SVGPaint, S
     }
 
     @Override
-    public void fillShape(@NotNull Graphics2D g, @NotNull MeasureContext measure, @NotNull Shape shape,
+    public void fillShape(@NotNull Graphics2D g, @NotNull RenderContext context, @NotNull Shape shape,
             @Nullable Rectangle2D bounds) {
         Rectangle2D b = bounds != null ? bounds : shape.getBounds2D();
-        GraphicsUtil.safelySetPaint(g, paintForBounds(g, measure, b));
+        GraphicsUtil.safelySetPaint(g, paintForBounds(g, context, b));
         g.fill(shape);
     }
 
     @Override
-    public void drawShape(@NotNull Graphics2D g, @NotNull MeasureContext measure, @NotNull Shape shape,
+    public void drawShape(@NotNull Graphics2D g, @NotNull RenderContext context, @NotNull Shape shape,
             @Nullable Rectangle2D bounds) {
         Rectangle2D b = bounds != null ? bounds : shape.getBounds2D();
-        GraphicsUtil.safelySetPaint(g, paintForBounds(g, measure, b));
-        g.setPaint(paintForBounds(g, measure, b));
+        GraphicsUtil.safelySetPaint(g, paintForBounds(g, context, b));
+        g.setPaint(paintForBounds(g, context, b));
         g.draw(shape);
     }
 
-    private @NotNull Paint paintForBounds(@NotNull Graphics2D g, @NotNull MeasureContext measure,
+    private @NotNull Paint paintForBounds(@NotNull Graphics2D g, @NotNull RenderContext context,
             @NotNull Rectangle2D bounds) {
+        MeasureContext measure = context.measureContext();
         Rectangle2D.Double patternBounds = patternUnits.computeViewBounds(measure, bounds, x, y, width, height);
-
-        if (patternUnits == UnitType.ObjectBoundingBox) {
-            patternBounds.x += bounds.getX();
-            patternBounds.y += bounds.getY();
-        }
 
         // TODO: With overflow = visible this does not result in the correct behaviour
         BufferedImage img = ImageUtil.createCompatibleTransparentImage(g, patternBounds.width, patternBounds.height);
@@ -173,6 +169,8 @@ public final class Pattern extends BaseInnerViewContainer implements SVGPaint, S
         imgGraphics.scale(img.getWidth() / patternBounds.width, img.getHeight() / patternBounds.height);
 
         RenderContext patternContext = RenderContext.createInitial(null, patternContentUnits.deriveMeasure(measure));
+        // TODO: What is the correct root transform here?
+        patternContext.setRootTransform(imgGraphics.getTransform());
 
         FloatSize size;
         ViewBox view = viewBox;

@@ -84,6 +84,7 @@ public final class NodeRenderer {
         public void close() {
             filter.applyFilter(this.g, context, filterInfo);
             filterInfo.blitImage(this.g, context);
+            filterInfo.close();
             super.close();
         }
     }

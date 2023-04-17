@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -57,7 +57,7 @@ final class CharacterDataParser {
         if (isSegmentBreak(data[begin])) {
             int segmentBreaks = trimLeadingWhiteSpace();
             if (state == State.SEGMENT_BREAK) segmentBreaks++;
-            if (begin > offset && (segmentBreaks > 1)) {
+            if (begin > offset && segmentBreaks > 1) {
                 begin--;
                 data[begin] = ' ';
                 if (state == State.CHARACTER || state == State.SEGMENT_BREAK) {
@@ -76,7 +76,7 @@ final class CharacterDataParser {
             System.out.println("Portion: [" + new String(ch, begin, end - begin).replace("\n", "\\n") + "]");
         }
 
-        buffer.ensureCapacity(buffer.length() + (end - begin));
+        buffer.ensureCapacity(buffer.length() + end - begin);
         appendData();
     }
 

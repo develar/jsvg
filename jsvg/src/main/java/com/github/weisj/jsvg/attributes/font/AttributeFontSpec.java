@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -27,8 +27,9 @@ import com.github.weisj.jsvg.nodes.prototype.Mutator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
+public final class AttributeFontSpec extends FontSpec implements Mutator<MeasurableFontSpec> {
+    private final @Nullable FontSize size;
+    private final @Nullable FontWeight weight;
 
 public final class AttributeFontSpec extends FontSpec implements Mutator<MeasurableFontSpec> {
     final @Nullable FontSize size;

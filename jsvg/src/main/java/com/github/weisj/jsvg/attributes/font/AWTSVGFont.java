@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -46,10 +46,6 @@ final class AWTSVGFont implements SVGFont {
     AWTSVGFont(@NotNull Font font) {
         this.font = font;
         this.glyphCache = new HashMap<>();
-    }
-
-    public @NotNull Font font() {
-        return font;
     }
 
     @Override
@@ -141,6 +137,6 @@ final class AWTSVGFont implements SVGFont {
         GlyphMetrics gm = glyphVector.getGlyphMetrics(0);
         float advance = gm.getAdvanceX();
         Shape shape = glyphVector.getGlyphOutline(0);
-        return new Glyph(codepoint, shape, advance, gm.getBounds2D().isEmpty());
+        return new Glyph(shape, advance, gm.getBounds2D().isEmpty());
     }
 }

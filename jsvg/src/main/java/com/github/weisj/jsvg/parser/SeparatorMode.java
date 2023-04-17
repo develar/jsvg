@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Jannis Weis
+ * Copyright (c) 2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,21 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.weisj.jsvg.nodes.prototype;
+package com.github.weisj.jsvg.parser;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.github.weisj.jsvg.attributes.ViewBox;
-import com.github.weisj.jsvg.geometry.size.MeasureContext;
-import com.github.weisj.jsvg.parser.AttributeNode;
-
-public interface MaybeHasViewBox {
-    @Nullable
-    ViewBox viewBox(@NotNull MeasureContext measureContext);
-
-    default @Nullable ViewBox parseViewBox(@NotNull AttributeNode attributeNode) {
-        float[] viewBoxCords = attributeNode.getFloatList("viewBox");
-        return viewBoxCords.length == 4 ? new ViewBox(viewBoxCords) : null;
-    }
+public enum SeparatorMode {
+    COMMA_ONLY,
+    WHITESPACE_ONLY,
+    COMMA_AND_WHITESPACE
 }

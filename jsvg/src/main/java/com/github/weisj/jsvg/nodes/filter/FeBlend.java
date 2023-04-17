@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Jannis Weis
+ * Copyright (c) 2022-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.attributes.filter.BlendMode;
 import com.github.weisj.jsvg.attributes.filter.DefaultFilterChannel;
+import com.github.weisj.jsvg.nodes.animation.Animate;
+import com.github.weisj.jsvg.nodes.animation.Set;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
@@ -36,9 +38,9 @@ import com.github.weisj.jsvg.renderer.RenderContext;
 
 @ElementCategories(Category.FilterPrimitive)
 @PermittedContent(
-    anyOf = { /* <animate>, <set> */ }
+    anyOf = {Animate.class, Set.class}
 )
-public final class FeBlend extends FilterPrimitive {
+public final class FeBlend extends AbstractFilterPrimitive {
     public static final String TAG = "feblend";
 
     private Object inputChannel2;
@@ -59,10 +61,11 @@ public final class FeBlend extends FilterPrimitive {
     }
 
     @Override
-    public void applyFilter(@NotNull Graphics2D g, @NotNull RenderContext context,
+    public void applyFilter(@NotNull RenderContext context,
             @NotNull FilterContext filterContext) {
-        Channel in = inputChannel(filterContext);
-        Channel in2 = channel(inputChannel2, filterContext);
+        FilterPrimitiveBase impl = impl();
+        Channel in = impl.inputChannel(filterContext);
+        Channel in2 = impl.channel(inputChannel2, filterContext);
         BufferedImage dst = in.toBufferedImageNonAliased(context);
 
         Graphics2D imgGraphics = (Graphics2D) dst.getGraphics();
@@ -70,6 +73,6 @@ public final class FeBlend extends FilterPrimitive {
         imgGraphics.drawImage(context.createImage(in2.producer()), null, context.targetComponent());
         imgGraphics.dispose();
 
-        saveResult(new ImageProducerChannel(dst.getSource()), filterContext);
+        impl.saveResult(new ImageProducerChannel(dst.getSource()), filterContext);
     }
 }

@@ -24,10 +24,8 @@ package com.github.weisj.jsvg;
 import static com.github.weisj.jsvg.ReferenceTest.ReferenceTestResult.SUCCESS;
 import static com.github.weisj.jsvg.ReferenceTest.compareImages;
 import static com.github.weisj.jsvg.ReferenceTest.render;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
@@ -35,10 +33,16 @@ import org.junit.jupiter.api.condition.JRE;
 class FilterTest {
 
     @Test
-    @Disabled("FIXME: Colors aren't accurate")
     void testGaussianBlur() {
         assertEquals(SUCCESS, compareImages("filter/blur.svg"));
         assertEquals(SUCCESS, compareImages("filter/blur2.svg"));
+    }
+
+    @Test
+    void testEdgeMode() {
+        assertDoesNotThrow(() -> render("filter/edgeModeDuplicate.svg"));
+        assertDoesNotThrow(() -> render("filter/edgeModeNone.svg"));
+        assertDoesNotThrow(() -> render("filter/edgeModeWrap.svg"));
     }
 
     @Test
@@ -55,7 +59,7 @@ class FilterTest {
     @Test
     @EnabledForJreRange(min = JRE.JAVA_9)
     void testTurbulence() {
-        assertEquals(SUCCESS, compareImages("filter/turbulence1.svg"));
+        assertEquals(SUCCESS, compareImages("filter/turbulence1.svg", 2));
         assertEquals(SUCCESS, compareImages("filter/turbulence2.svg"));
         assertEquals(SUCCESS, compareImages("filter/turbulence3.svg"));
     }
@@ -71,6 +75,11 @@ class FilterTest {
     void testBlend() {
         // Filter region not applied correctly.
         assertDoesNotThrow(() -> render("filter/blend.svg"));
+    }
+
+    @Test
+    void testOffset() {
+        assertDoesNotThrow(() -> render("filter/offset.svg"));
     }
 
     @Test

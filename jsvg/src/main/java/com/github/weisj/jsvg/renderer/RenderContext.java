@@ -21,6 +21,15 @@
  */
 package com.github.weisj.jsvg.renderer;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.ImageProducer;
+
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.github.weisj.jsvg.attributes.FillRule;
 import com.github.weisj.jsvg.attributes.Percentage;
 import com.github.weisj.jsvg.attributes.ViewBox;
@@ -114,6 +123,11 @@ public final class RenderContext {
                 newPaintContext, newMeasureContext, effectiveFrc, newFontSpec, newFillRule, newContextAttributes);
     }
 
+    public @NotNull RenderContext deriveForChildGraphics() {
+        // Pass non-trivial context mutator to ensure userSpaceTransform gets created a different copy.
+        return derive(t -> t, null, null, null, null, null);
+    }
+
     public @NotNull StrokeContext strokeContext() {
         // This will never be null for a RenderContext.
         // Our deriving mechanism together with non-null initial values prohibits this.
@@ -132,6 +146,41 @@ public final class RenderContext {
 
     public @NotNull AffineTransform userSpaceTransform() {
         return userSpaceTransform;
+    }
+
+    public void setRootTransform(@NotNull AffineTransform rootTransform) {
+        this.rootTransform.setTransform(rootTransform);
+        this.userSpaceTransform.setToIdentity();
+    }
+
+    public void setRootTransform(@NotNull AffineTransform rootTransform, @NotNull AffineTransform userSpaceTransform) {
+        this.rootTransform.setTransform(rootTransform);
+        this.userSpaceTransform.setTransform(userSpaceTransform);
+    }
+
+    public void translate(@NotNull Graphics2D g, @NotNull Point2D dp) {
+        translate(g, dp.getX(), dp.getY());
+    }
+
+    public void translate(@NotNull Graphics2D g, double dx, double dy) {
+        // TODO: Do this for remaining calls to translate/transform/scale etc.
+        g.translate(dx, dy);
+        userSpaceTransform.translate(dx, dy);
+    }
+
+    public void scale(@NotNull Graphics2D g, double sx, double sy) {
+        g.scale(sx, sy);
+        userSpaceTransform.scale(sx, sy);
+    }
+
+    public void rotate(@NotNull Graphics2D g, double angle) {
+        g.rotate(angle);
+        userSpaceTransform.rotate(angle);
+    }
+
+    public void transform(@NotNull Graphics2D g, @NotNull AffineTransform at) {
+        g.transform(at);
+        userSpaceTransform.concatenate(at);
     }
 
     public @Nullable JComponent targetComponent() {

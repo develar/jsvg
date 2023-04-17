@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -21,7 +21,6 @@
  */
 package com.github.weisj.jsvg.nodes.filter;
 
-import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
@@ -29,6 +28,8 @@ import java.awt.image.*;
 import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.geometry.noise.PerlinTurbulence;
+import com.github.weisj.jsvg.nodes.animation.Animate;
+import com.github.weisj.jsvg.nodes.animation.Set;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
@@ -38,9 +39,9 @@ import com.github.weisj.jsvg.util.ImageUtil;
 
 @ElementCategories(Category.FilterPrimitive)
 @PermittedContent(
-    anyOf = { /* <animate>, <set> */ }
+    anyOf = {Animate.class, Set.class}
 )
-public final class FeTurbulence extends FilterPrimitive {
+public final class FeTurbulence extends AbstractFilterPrimitive {
     public static final String TAG = "feturbulence";
 
     public enum Type {
@@ -78,13 +79,12 @@ public final class FeTurbulence extends FilterPrimitive {
     }
 
     @Override
-    public void applyFilter(@NotNull Graphics2D g, @NotNull RenderContext context,
-            @NotNull FilterContext filterContext) {
+    public void applyFilter(@NotNull RenderContext context, @NotNull FilterContext filterContext) {
         Filter.FilterInfo info = filterContext.info();
         Channel turbulenceChannel =
-                new TurbulenceChannel(info.imageBounds, info.imageWidth, info.imageHeight, seed, numOctaves,
+                new TurbulenceChannel(info.imageBounds(), info.imageWidth, info.imageHeight, seed, numOctaves,
                         baseFrequency[0], baseFrequency.length > 1 ? baseFrequency[1] : baseFrequency[0], type);
-        saveResult(turbulenceChannel, filterContext);
+        impl().saveResult(turbulenceChannel, filterContext);
     }
 
     public static final class TurbulenceChannel implements Channel, PixelProvider {

@@ -23,6 +23,8 @@ package com.github.weisj.jsvg.nodes.filter;
 
 import com.github.weisj.jsvg.attributes.paint.AwtSVGPaint;
 import com.github.weisj.jsvg.attributes.paint.SVGPaint;
+import com.github.weisj.jsvg.nodes.animation.Animate;
+import com.github.weisj.jsvg.nodes.animation.Set;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
@@ -35,9 +37,9 @@ import java.awt.image.BufferedImage;
 
 @ElementCategories(Category.FilterPrimitive)
 @PermittedContent(
-    anyOf = { /* <animate>, <set> */ }
+    anyOf = {Animate.class, Set.class}
 )
-public final class FeFlood extends FilterPrimitive {
+public final class FeFlood extends AbstractFilterPrimitive {
     public static final String TAG = "feflood";
 
     private SVGPaint floodColor;
@@ -56,8 +58,7 @@ public final class FeFlood extends FilterPrimitive {
     }
 
     @Override
-    public void applyFilter(@NotNull Graphics2D g, @NotNull RenderContext context,
-            @NotNull FilterContext filterContext) {
+    public void applyFilter(@NotNull RenderContext context, @NotNull FilterContext filterContext) {
         // Todo: We should be able to optimize this heavily by implementing a custom image producer.
         // and even then filters like feBlend could benefit from knowing that this is a constant color.
         Filter.FilterInfo info = filterContext.info();
@@ -66,10 +67,10 @@ public final class FeFlood extends FilterPrimitive {
             Graphics2D graphics = (Graphics2D) img.getGraphics();
             graphics.setComposite(AlphaComposite.Src.derive(floodOpacity));
             Rectangle rect = new Rectangle(0, 0, img.getWidth(), img.getHeight());
-            floodColor.fillShape(graphics, context.measureContext(), rect, rect);
+            floodColor.fillShape(graphics, context, rect, rect);
             graphics.dispose();
         }
-        saveResult(new ImageProducerChannel(img.getSource()), filterContext);
+        impl().saveResult(new ImageProducerChannel(img.getSource()), filterContext);
     }
 
 }

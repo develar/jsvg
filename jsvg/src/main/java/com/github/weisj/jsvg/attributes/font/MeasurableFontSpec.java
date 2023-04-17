@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -100,11 +100,11 @@ public final class MeasurableFontSpec extends FontSpec {
         FontStyle newStyle = other.style != null
                 ? other.style
                 : this.style;
-        int newWeight = other.weight != null
-                ? other.weight.weight(currentWeight)
+        int newWeight = other.weight() != null
+                ? other.weight().weight(currentWeight)
                 : this.currentWeight;
-        Length newSize = other.size != null
-                ? other.size.size(currentSize)
+        Length newSize = other.size() != null
+                ? other.size().size(currentSize)
                 : this.currentSize;
         Length newSizeAdjust = other.sizeAdjust != null
                 ? other.sizeAdjust
