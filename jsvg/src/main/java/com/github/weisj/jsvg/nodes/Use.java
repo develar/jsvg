@@ -21,12 +21,6 @@
  */
 package com.github.weisj.jsvg.nodes;
 
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.FillRule;
 import com.github.weisj.jsvg.attributes.font.AttributeFontSpec;
 import com.github.weisj.jsvg.attributes.font.FontParser;
@@ -43,8 +37,15 @@ import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
 import com.github.weisj.jsvg.parser.AttributeNode;
-import com.github.weisj.jsvg.renderer.*;
+import com.github.weisj.jsvg.renderer.FontRenderContext;
+import com.github.weisj.jsvg.renderer.NodeRenderer;
 import com.github.weisj.jsvg.renderer.PaintContext;
+import com.github.weisj.jsvg.renderer.RenderContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 @ElementCategories({Category.Graphic, Category.GraphicsReferencing, Category.Structural})
 @PermittedContent(categories = {Category.Animation, Category.Descriptive})
@@ -86,13 +87,35 @@ public final class Use extends RenderableSVGNode implements HasContext, HasShape
         height = attributeNode.getLength("height", Length.UNSPECIFIED);
 
         String href = attributeNode.getValue("href");
-        if (href == null) href = attributeNode.getValue("xlink:href");
+        if (href == null) {
+            href = attributeNode.getValue("xlink:href");
+        }
         referencedNode = attributeNode.getElementByHref(SVGNode.class, href);
+        checkTooDeep(referencedNode, 0);
 
         paintContext = PaintContext.parse(attributeNode);
         fontRenderContext = FontRenderContext.parse(attributeNode);
         fontSpec = FontParser.parseFontSpec(attributeNode);
         fillRule = FillRule.parse(attributeNode);
+    }
+
+    private static void checkTooDeep(SVGNode referencedNode, int level) {
+        if (referencedNode instanceof Use u) {
+            checkLevel(level);
+            checkTooDeep(u.referencedNode, level + 1);
+        }
+        else if (referencedNode instanceof Group g) {
+            checkLevel(level);
+            for (SVGNode child : g.children()) {
+                checkTooDeep(child, level + 1);
+            }
+        }
+    }
+
+    private static void checkLevel(int level) {
+        if (level > 6) {
+            throw new IllegalStateException("use is over-nested: " + level);
+        }
     }
 
     @Override
