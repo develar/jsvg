@@ -75,7 +75,6 @@ public final class AttributeNode {
         List<StyleSheet> sheets = styleSheets;
 
         // First process the inline styles. They have the highest priority.
-        Map<String, String> result;
         String styleStr = attributes.get("style");
         if (styleStr == null && sheets.isEmpty()) {
             return;
@@ -171,8 +170,8 @@ public final class AttributeNode {
     }
 
     public @Nullable String getValue(@NotNull String key) {
-        String value = attributes.get(key);
-        return value != null ? value.trim() : null;
+        // trim is done as a part of building a document
+        return attributes.get(key);
     }
 
     public @NotNull Color getColor(@NotNull String key) {
