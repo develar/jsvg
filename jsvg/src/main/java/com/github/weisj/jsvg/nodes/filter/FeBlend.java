@@ -22,29 +22,25 @@
 package com.github.weisj.jsvg.nodes.filter;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.attributes.filter.BlendMode;
-import com.github.weisj.jsvg.attributes.filter.DefaultFilterChannel;
 import com.github.weisj.jsvg.nodes.animation.Animate;
 import com.github.weisj.jsvg.nodes.animation.Set;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
 import com.github.weisj.jsvg.parser.AttributeNode;
-import com.github.weisj.jsvg.renderer.RenderContext;
 
 @ElementCategories(Category.FilterPrimitive)
 @PermittedContent(
     anyOf = {Animate.class, Set.class}
 )
-public final class FeBlend extends AbstractFilterPrimitive {
+public final class FeBlend extends AbstractCompositeFilterPrimitive {
     public static final String TAG = "feblend";
 
-    private Object inputChannel2;
-    private BlendComposite composite;
+    private BlendModeComposite composite;
 
     @Override
     public @NotNull String tagName() {
@@ -54,25 +50,12 @@ public final class FeBlend extends AbstractFilterPrimitive {
     @Override
     public void build(@NotNull AttributeNode attributeNode) {
         super.build(attributeNode);
-        inputChannel2 = attributeNode.getValue("in2");
-        if (inputChannel2 == null) inputChannel2 = DefaultFilterChannel.LastResult;
         BlendMode blendMode = attributeNode.getEnum("mode", BlendMode.Normal);
-        composite = new BlendComposite(blendMode);
+        composite = new BlendModeComposite(blendMode);
     }
 
     @Override
-    public void applyFilter(@NotNull RenderContext context,
-            @NotNull FilterContext filterContext) {
-        FilterPrimitiveBase impl = impl();
-        Channel in = impl.inputChannel(filterContext);
-        Channel in2 = impl.channel(inputChannel2, filterContext);
-        BufferedImage dst = in.toBufferedImageNonAliased(context);
-
-        Graphics2D imgGraphics = (Graphics2D) dst.getGraphics();
-        imgGraphics.setComposite(composite);
-        imgGraphics.drawImage(context.createImage(in2.producer()), null, context.targetComponent());
-        imgGraphics.dispose();
-
-        impl.saveResult(new ImageProducerChannel(dst.getSource()), filterContext);
+    protected @NotNull Composite composite() {
+        return composite;
     }
 }

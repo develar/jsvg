@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2023 Jannis Weis
+ * Copyright (c) 2022-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -22,41 +22,38 @@
 package com.github.weisj.jsvg.nodes.filter;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageProducer;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.github.weisj.jsvg.renderer.RenderContext;
+import com.github.weisj.jsvg.nodes.animation.Animate;
+import com.github.weisj.jsvg.nodes.animation.Set;
+import com.github.weisj.jsvg.nodes.prototype.spec.Category;
+import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
+import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
+import com.github.weisj.jsvg.parser.AttributeNode;
 
-public interface Channel {
+@ElementCategories(Category.FilterPrimitive)
+@PermittedContent(
+    anyOf = {Animate.class, Set.class}
+)
+public final class FeComposite extends AbstractCompositeFilterPrimitive {
+    public static final String TAG = "fecomposite";
 
-    @NotNull
-    ImageProducer producer();
+    private CompositeModeComposite composite;
 
-    default @NotNull Image toImage(@NotNull RenderContext context) {
-        return context.createImage(producer());
+    @Override
+    public @NotNull String tagName() {
+        return TAG;
     }
 
-    default @NotNull BufferedImage toBufferedImageNonAliased(@NotNull RenderContext context) {
-        return makeNonAliased(toImage(context));
+    @Override
+    public void build(@NotNull AttributeNode attributeNode) {
+        super.build(attributeNode);
+        composite = new CompositeModeComposite(attributeNode);
     }
 
-    static @NotNull BufferedImage makeNonAliased(@NotNull Image img) {
-        BufferedImage bufferedImage = new BufferedImage(
-                img.getWidth(null),
-                img.getHeight(null),
-                BufferedImage.TYPE_INT_ARGB);
-        Graphics imageGraphics = bufferedImage.getGraphics();
-        imageGraphics.drawImage(img, 0, 0, null);
-        imageGraphics.dispose();
-        return bufferedImage;
+    @Override
+    protected @NotNull Composite composite() {
+        return composite.composite();
     }
-
-    @NotNull
-    Channel applyFilter(@NotNull ImageFilter filter);
-
-    @NotNull
-    PixelProvider pixels(@NotNull RenderContext context);
 }
