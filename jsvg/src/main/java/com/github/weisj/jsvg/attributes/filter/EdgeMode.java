@@ -22,6 +22,7 @@
 package com.github.weisj.jsvg.attributes.filter;
 
 import com.github.weisj.jsvg.nodes.filter.FilterContext;
+import com.github.weisj.jsvg.renderer.GraphicsUtil;
 import com.github.weisj.jsvg.renderer.RenderContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,7 +90,7 @@ public enum EdgeMode {
         BufferedImage bufferedImage = new BufferedImage(
                 width + xSize, height + ySize,
                 BufferedImage.TYPE_INT_ARGB_PRE);
-        Graphics2D g = bufferedImage.createGraphics();
+        Graphics2D g = GraphicsUtil.createGraphics(bufferedImage);
 
         int xOff = xSize / 2;
         int yOff = ySize / 2;
@@ -112,7 +113,7 @@ public enum EdgeMode {
         int width = edgeModeImage.width;
         int height = edgeModeImage.height;
 
-        Graphics2D g = edgeModeImage.img.createGraphics();
+        Graphics2D g = GraphicsUtil.createGraphics(edgeModeImage.img);
 
         BufferedImage top = edgeModeImage.img.getSubimage(xOff, yOff, width, 1);
         BufferedImage left = edgeModeImage.img.getSubimage(xOff, yOff, 1, height);
@@ -160,7 +161,7 @@ public enum EdgeMode {
         int width = edgeModeImage.width;
         int height = edgeModeImage.height;
 
-        Graphics2D g = edgeModeImage.img.createGraphics();
+        Graphics2D g = GraphicsUtil.createGraphics(edgeModeImage.img);
 
         BufferedImage top = edgeModeImage.img.getSubimage(xOff, yOff, width, yOff);
         BufferedImage left = edgeModeImage.img.getSubimage(xOff, yOff, xOff, height);
