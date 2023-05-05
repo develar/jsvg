@@ -79,6 +79,12 @@ public final class FeTurbulence extends AbstractFilterPrimitive {
     }
 
     @Override
+    public void layoutFilter(@NotNull RenderContext context, @NotNull FilterLayoutContext filterLayoutContext) {
+        impl().saveLayoutResult(
+                filterLayoutContext.filterPrimitiveRegion(context.measureContext(), this), filterLayoutContext);
+    }
+
+    @Override
     public void applyFilter(@NotNull RenderContext context, @NotNull FilterContext filterContext) {
         Filter.FilterInfo info = filterContext.info();
         Channel turbulenceChannel =
