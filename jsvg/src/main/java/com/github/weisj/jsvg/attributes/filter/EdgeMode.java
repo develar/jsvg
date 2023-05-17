@@ -25,6 +25,10 @@ import com.github.weisj.jsvg.nodes.filter.FilterContext;
 import com.github.weisj.jsvg.renderer.GraphicsUtil;
 import com.github.weisj.jsvg.renderer.RenderContext;
 import com.github.weisj.jsvg.util.ImageUtil;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.awt.image.*;
 
 public enum EdgeMode {
     Duplicate {
