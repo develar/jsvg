@@ -23,14 +23,14 @@ package com.github.weisj.jsvg.util;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.awt.image.SinglePixelPackedSampleModel;
-import java.awt.image.WritableRaster;
+import java.awt.image.*;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.github.weisj.jsvg.geometry.util.GeometryUtil;
+import com.github.weisj.jsvg.renderer.GraphicsUtil;
+import com.github.weisj.jsvg.renderer.RenderContext;
 
 public final class ImageUtil {
     private ImageUtil() {}
@@ -40,26 +40,31 @@ public final class ImageUtil {
         return createCompatibleTransparentImage(g.getTransform(), width, height);
     }
 
-    public static @NotNull BufferedImage createCompatibleTransparentImage(@NotNull AffineTransform at, double width,
+    public static @NotNull BufferedImage createCompatibleTransparentImage(int width, int height) {
+        return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
+    }
+
+
+    public static @NotNull BufferedImage createCompatibleTransparentImage(@Nullable AffineTransform at, double width,
             double height) {
         return new BufferedImage(
                 (int) Math.ceil(GeometryUtil.scaleXOfTransform(at) * width),
                 (int) Math.ceil(GeometryUtil.scaleYOfTransform(at) * height), BufferedImage.TYPE_INT_ARGB_PRE);
     }
 
-    public static @NotNull BufferedImage createLuminosityBuffer(@NotNull AffineTransform at, double width,
+    public static @NotNull BufferedImage createLuminosityBuffer(@Nullable AffineTransform at, double width,
             double height) {
         return new BufferedImage(
                 (int) Math.ceil(GeometryUtil.scaleXOfTransform(at) * width),
                 (int) Math.ceil(GeometryUtil.scaleYOfTransform(at) * height), BufferedImage.TYPE_BYTE_GRAY);
     }
 
-    public static int[] getINT_RGBA_DataBank(@NotNull WritableRaster raster) {
+    public static int[] getINT_RGBA_DataBank(@NotNull Raster raster) {
         DataBufferInt dstDB = (DataBufferInt) raster.getDataBuffer();
         return dstDB.getBankData()[0];
     }
 
-    public static int getINT_RGBA_DataOffset(@NotNull WritableRaster raster) {
+    public static int getINT_RGBA_DataOffset(@NotNull Raster raster) {
         DataBufferInt dstDB = (DataBufferInt) raster.getDataBuffer();
         SinglePixelPackedSampleModel sppsm = (SinglePixelPackedSampleModel) raster.getSampleModel();
         return dstDB.getOffset() + sppsm.getOffset(
@@ -67,7 +72,21 @@ public final class ImageUtil {
                 raster.getMinY() - raster.getSampleModelTranslateY());
     }
 
-    public static int getINT_RGBA_DataAdjust(@NotNull WritableRaster raster) {
-        return ((SinglePixelPackedSampleModel) raster.getSampleModel()).getScanlineStride() - raster.getWidth();
+    public static int getINT_RGBA_DataAdjust(@NotNull Raster raster) {
+        return getINT_RGBA_ScanlineStride(raster) - raster.getWidth();
+    }
+
+    public static int getINT_RGBA_ScanlineStride(@NotNull Raster raster) {
+        return ((SinglePixelPackedSampleModel) raster.getSampleModel()).getScanlineStride();
+    }
+
+    public static @NotNull BufferedImage copy(@NotNull RenderContext context, @NotNull ImageProducer producer) {
+        Image img = context.createImage(producer);
+        BufferedImage bufferedImage = createCompatibleTransparentImage((AffineTransform) null,
+                img.getWidth(null), img.getHeight(null));
+        Graphics2D g = GraphicsUtil.createGraphics(bufferedImage);
+        g.drawImage(img, null, null);
+        g.dispose();
+        return bufferedImage;
     }
 }

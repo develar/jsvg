@@ -24,38 +24,43 @@ package com.github.weisj.jsvg.attributes.filter;
 import com.github.weisj.jsvg.nodes.filter.FilterContext;
 import com.github.weisj.jsvg.renderer.GraphicsUtil;
 import com.github.weisj.jsvg.renderer.RenderContext;
-import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.awt.image.*;
+import com.github.weisj.jsvg.util.ImageUtil;
 
 public enum EdgeMode {
     Duplicate {
         @Override
         public ImageProducer convolve(@NotNull RenderContext context, @NotNull FilterContext filterContext,
-                @NotNull ImageProducer producer, @NotNull Kernel[] kernels, int kernelCount) {
-            return convolveDuplicate(context, filterContext, producer, kernels, kernelCount);
+                @NotNull ImageProducer producer, @NotNull ConvolveOperation convolveOperation) {
+            return convolveDuplicate(context, filterContext, producer, convolveOperation);
         }
     },
     Wrap {
         @Override
         public ImageProducer convolve(@NotNull RenderContext context, @NotNull FilterContext filterContext,
-                @NotNull ImageProducer producer, @NotNull Kernel[] kernels, int kernelCount) {
-            return convolveWrap(context, filterContext, producer, kernels, kernelCount);
+                @NotNull ImageProducer producer, @NotNull ConvolveOperation convolveOperation) {
+            return convolveWrap(context, filterContext, producer, convolveOperation);
         }
     },
     None {
         @Override
         public ImageProducer convolve(@NotNull RenderContext context, @NotNull FilterContext filterContext,
-                @NotNull ImageProducer producer, @NotNull Kernel[] kernels, int kernelCount) {
-            return applyConvolutions(filterContext.renderingHints(), producer, kernels, kernelCount,
-                    ConvolveOp.EDGE_ZERO_FILL);
+                @NotNull ImageProducer producer, @NotNull ConvolveOperation convolveOperation) {
+            return applyConvolutions(filterContext.renderingHints(), ImageUtil.copy(context, producer),
+                    convolveOperation, ConvolveOp.EDGE_ZERO_FILL);
         }
     };
 
     public abstract ImageProducer convolve(@NotNull RenderContext context, @NotNull FilterContext filterContext,
-            @NotNull ImageProducer producer, @NotNull Kernel[] kernels, int kernelCount);
+            @NotNull ImageProducer producer, @NotNull ConvolveOperation convolveOperation);
 
+    public interface ConvolveOperation {
+
+        @NotNull
+        Dimension maximumKernelSize();
+
+        @NotNull
+        ImageProducer convolve(@NotNull BufferedImage image, @NotNull RenderingHints hints, int awtEdgeMode);
+    }
 
     private static final class EdgeModeImage {
         private final @NotNull BufferedImage img;
@@ -74,22 +79,16 @@ public enum EdgeMode {
     }
 
     private static EdgeModeImage prepareEdgeModeImage(@NotNull RenderContext context,
-            @NotNull ImageProducer producer, @NotNull Kernel[] kernels, int kernelCount) {
+            @NotNull ImageProducer producer, @NotNull ConvolveOperation convolveOperation) {
         Image img = context.createImage(producer);
         int width = img.getWidth(null);
         int height = img.getHeight(null);
 
-        int xSize = 0;
-        int ySize = 0;
-        for (int i = 0; i < kernelCount; i++) {
-            Kernel kernel = kernels[i];
-            xSize = Math.max(xSize, kernel.getWidth());
-            ySize = Math.max(ySize, kernel.getHeight());
-        }
+        Dimension kernelSize = convolveOperation.maximumKernelSize();
+        int xSize = kernelSize.width;
+        int ySize = kernelSize.height;
 
-        BufferedImage bufferedImage = new BufferedImage(
-                width + xSize, height + ySize,
-                BufferedImage.TYPE_INT_ARGB_PRE);
+        BufferedImage bufferedImage = ImageUtil.createCompatibleTransparentImage(width + xSize, height + ySize);
         Graphics2D g = GraphicsUtil.createGraphics(bufferedImage);
 
         int xOff = xSize / 2;
@@ -103,11 +102,9 @@ public enum EdgeMode {
     }
 
     private static @NotNull ImageProducer convolveDuplicate(@NotNull RenderContext context,
-            @NotNull FilterContext filterContext,
-            @NotNull ImageProducer producer, @NotNull Kernel[] kernels, int kernelCount) {
-        if (kernelCount <= 0) return producer;
-
-        EdgeModeImage edgeModeImage = prepareEdgeModeImage(context, producer, kernels, kernelCount);
+            @NotNull FilterContext filterContext, @NotNull ImageProducer producer,
+            @NotNull ConvolveOperation convolveOperation) {
+        EdgeModeImage edgeModeImage = prepareEdgeModeImage(context, producer, convolveOperation);
         int xOff = edgeModeImage.xOff;
         int yOff = edgeModeImage.yOff;
         int width = edgeModeImage.width;
@@ -145,17 +142,15 @@ public enum EdgeMode {
         g.dispose();
 
         ImageProducer output =
-                applyConvolutions(filterContext.renderingHints(), edgeModeImage.img.getSource(), kernels, kernelCount,
+                applyConvolutions(filterContext.renderingHints(), edgeModeImage.img, convolveOperation,
                         ConvolveOp.EDGE_NO_OP);
         CropImageFilter cropImageFilter = new CropImageFilter(xOff, yOff, width, height);
         return new FilteredImageSource(output, cropImageFilter);
     }
 
     private static ImageProducer convolveWrap(@NotNull RenderContext context, @NotNull FilterContext filterContext,
-            @NotNull ImageProducer producer, @NotNull Kernel[] kernels, int kernelCount) {
-        if (kernelCount <= 0) return producer;
-
-        EdgeModeImage edgeModeImage = prepareEdgeModeImage(context, producer, kernels, kernelCount);
+            @NotNull ImageProducer producer, @NotNull ConvolveOperation convolveOperation) {
+        EdgeModeImage edgeModeImage = prepareEdgeModeImage(context, producer, convolveOperation);
         int xOff = edgeModeImage.xOff;
         int yOff = edgeModeImage.yOff;
         int width = edgeModeImage.width;
@@ -184,21 +179,15 @@ public enum EdgeMode {
         g.drawImage(topLeft, xOff + width, yOff + height, null);
 
         ImageProducer output =
-                applyConvolutions(filterContext.renderingHints(), edgeModeImage.img.getSource(), kernels, kernelCount,
+                applyConvolutions(filterContext.renderingHints(), edgeModeImage.img, convolveOperation,
                         ConvolveOp.EDGE_NO_OP);
         CropImageFilter cropImageFilter = new CropImageFilter(xOff, yOff, width, height);
         return new FilteredImageSource(output, cropImageFilter);
     }
 
-    private static ImageProducer applyConvolutions(@NotNull RenderingHints hints, @NotNull ImageProducer producer,
-            @NotNull Kernel[] kernels, int kernelCount, int awtEdgeMode) {
-        ImageProducer output = producer;
-        for (int i = 0; i < kernelCount; i++) {
-            BufferedImageFilter filter = new BufferedImageFilter(
-                    new ConvolveOp(kernels[i], awtEdgeMode, hints));
-            output = new FilteredImageSource(output, filter);
-        }
-        return output;
+    private static ImageProducer applyConvolutions(@NotNull RenderingHints hints, @NotNull BufferedImage image,
+            @NotNull ConvolveOperation convolveOperation, int awtEdgeMode) {
+        return convolveOperation.convolve(image, hints, awtEdgeMode);
     }
 
 }
