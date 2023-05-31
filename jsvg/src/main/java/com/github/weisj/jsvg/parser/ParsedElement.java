@@ -21,22 +21,22 @@
  */
 package com.github.weisj.jsvg.parser;
 
-import com.github.weisj.jsvg.nodes.SVGNode;
-import com.github.weisj.jsvg.nodes.prototype.Container;
-import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
+import com.github.weisj.jsvg.nodes.SVGNode;
+import com.github.weisj.jsvg.nodes.prototype.Container;
+import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
 
 public final class ParsedElement {
 
     private enum BuildStatus {
-        NO,
-        BUILDING,
-        YES
+        NOT_BUILT,
+        IN_PROGRESS,
+        FINISHED
     }
 
     private final @Nullable String id;
@@ -45,12 +45,12 @@ public final class ParsedElement {
 
     private final @NotNull List<@NotNull ParsedElement> children = new ArrayList<>();
     final CharacterDataParser characterDataParser;
-    private @NotNull BuildStatus buildStatus = BuildStatus.NO;
+    private @NotNull BuildStatus buildStatus = BuildStatus.NOT_BUILT;
 
-    public ParsedElement(@Nullable String id, @NotNull AttributeNode element, @NotNull SVGNode node) {
-        this.id = id;
+    ParsedElement(@Nullable String id, @NotNull AttributeNode element, @NotNull SVGNode node) {
         this.attributeNode = element;
         this.node = node;
+        this.id = id;
         PermittedContent permittedContent = node.getClass().getAnnotation(PermittedContent.class);
         if (permittedContent == null) {
             throw new IllegalStateException("Element <" + node.tagName() + "> doesn't specify permitted content");
@@ -60,6 +60,10 @@ public final class ParsedElement {
         } else {
             characterDataParser = null;
         }
+    }
+
+    public void registerNamedElement(@NotNull String name, @NotNull Object element) {
+        attributeNode.namedElements().put(name, element);
     }
 
     public @Nullable String id() {
@@ -75,9 +79,9 @@ public final class ParsedElement {
     }
 
     public @NotNull SVGNode nodeEnsuringBuildStatus() {
-        if (buildStatus == BuildStatus.BUILDING) {
-            warnAboutCyclicDependency();
-        } else if (buildStatus == BuildStatus.NO) {
+        if (buildStatus == BuildStatus.IN_PROGRESS) {
+            cyclicDependencyDetected();
+        } else if (buildStatus == BuildStatus.NOT_BUILT) {
             build();
         }
         return node;
@@ -87,20 +91,20 @@ public final class ParsedElement {
         return attributeNode;
     }
 
-    public void addChild(ParsedElement parsedElement) {
+    void addChild(ParsedElement parsedElement) {
         children.add(parsedElement);
         if (node instanceof Container) {
             ((Container<?>) node).addChild(parsedElement.id, parsedElement.node);
         }
     }
 
-    public void build() {
-        if (buildStatus == BuildStatus.YES) return;
-        if (buildStatus == BuildStatus.BUILDING) {
-            warnAboutCyclicDependency();
+    void build() {
+        if (buildStatus == BuildStatus.FINISHED) return;
+        if (buildStatus == BuildStatus.IN_PROGRESS) {
+            cyclicDependencyDetected();
             return;
         }
-        buildStatus = BuildStatus.BUILDING;
+        buildStatus = BuildStatus.IN_PROGRESS;
 
         attributeNode.prepareForNodeBuilding(this);
 
@@ -110,7 +114,7 @@ public final class ParsedElement {
             child.build();
         }
         node.build(attributeNode);
-        buildStatus = BuildStatus.YES;
+        buildStatus = BuildStatus.FINISHED;
     }
 
     @Override
@@ -118,7 +122,7 @@ public final class ParsedElement {
         return "ParsedElement{" + "node=" + node + '}';
     }
 
-    private void warnAboutCyclicDependency() {
-        Logger.getLogger(ParsedElement.class.getName()).warning("Cyclic dependency involving node " + id + " detected.");
+    private void cyclicDependencyDetected() {
+        throw new IllegalStateException("Cyclic dependency involving node '" + id + "' detected.");
     }
 }

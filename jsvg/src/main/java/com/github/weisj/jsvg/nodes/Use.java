@@ -191,7 +191,7 @@ public final class Use extends RenderableSVGNode implements HasContext, HasShape
                 ", y=" + y +
                 ", width=" + width +
                 ", height=" + height +
-                ", referencedNode=" + referencedNode +
+                ", referencedNode=" + (referencedNode != null ? referencedNode.id() : null) +
                 ", styleContext=" + paintContext +
                 ", fillRule=" + fillRule +
                 '}';

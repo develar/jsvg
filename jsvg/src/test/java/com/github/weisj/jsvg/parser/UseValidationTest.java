@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Jannis Weis
+ * Copyright (c) 2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,21 +19,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.weisj.jsvg.util;
+package com.github.weisj.jsvg.parser;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.junit.jupiter.api.Test;
 
-final class Todo {
-    private Todo() {}
+class UseValidationTest {
 
-    @SuppressWarnings("TypeParameterUnusedInFormals")
-    public static <T> @NotNull T todo() {
-        return todo("");
+    private final StaxSVGLoader loader = new StaxSVGLoader(new NodeSupplier());
+
+    private void tryLoad(@NotNull String path) throws IOException, XMLStreamException {
+        loader.load(
+                Objects.requireNonNull(UseValidationTest.class.getResourceAsStream(path)),
+                new DefaultParserProvider(),
+                new SynchronousResourceLoader());
     }
 
-    @SuppressWarnings({"TypeParameterUnusedInFormals", "DoNotCallSuggester"})
-    private static <T> @NotNull T todo(@Nullable String msg) {
-        throw new UnsupportedOperationException("Todo: " + msg);
+    @Test
+    void detectReferenceCycle() {
+        assertThrows(IllegalStateException.class, () -> tryLoad("useCycle.svg"));
+        assertThrows(IllegalStateException.class, () -> tryLoad("useCycleSelfReference.svg"));
+    }
+
+    @Test
+    void detectDeepNesting() {
+        assertThrows(IllegalStateException.class, () -> tryLoad("useNesting.svg"));
     }
 }
