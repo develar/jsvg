@@ -26,6 +26,7 @@ import java.awt.*;
 import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.attributes.UnitType;
+import com.github.weisj.jsvg.attributes.filter.FilterChannelKey;
 
 public final class FilterContext {
     private final @NotNull ChannelStorage<Channel> resultChannels = new ChannelStorage<>();
@@ -56,7 +57,7 @@ public final class FilterContext {
         return resultChannels;
     }
 
-    public @NotNull Channel getChannel(@NotNull Object key) {
+    public @NotNull Channel getChannel(@NotNull FilterChannelKey key) {
         return resultChannels.get(key);
     }
 }

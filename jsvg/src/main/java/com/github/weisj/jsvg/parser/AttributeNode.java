@@ -24,6 +24,8 @@ package com.github.weisj.jsvg.parser;
 import com.github.weisj.jsvg.attributes.AttributeParser;
 import com.github.weisj.jsvg.attributes.Percentage;
 import com.github.weisj.jsvg.attributes.ViewBox;
+import com.github.weisj.jsvg.attributes.filter.DefaultFilterChannel;
+import com.github.weisj.jsvg.attributes.filter.FilterChannelKey;
 import com.github.weisj.jsvg.attributes.paint.PaintParser;
 import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.geometry.size.Length;
@@ -271,6 +273,12 @@ public final class AttributeNode {
 
     public @Nullable Filter getFilter() {
         return getElementByUrl(Filter.class, getValue("filter"));
+    }
+
+    public @NotNull FilterChannelKey getFilterChannelKey(@NotNull String key, @NotNull DefaultFilterChannel fallback) {
+        String in = getValue(key);
+        if (in == null) return fallback;
+        return new FilterChannelKey.StringKey(in);
     }
 
     public @Nullable AffineTransform parseTransform(@NotNull String key) {

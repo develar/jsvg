@@ -31,8 +31,11 @@ import org.jetbrains.annotations.Nullable;
 
 import com.github.weisj.jsvg.attributes.UnitType;
 import com.github.weisj.jsvg.attributes.filter.DefaultFilterChannel;
+import com.github.weisj.jsvg.attributes.filter.LayoutBounds;
+import com.github.weisj.jsvg.geometry.size.FloatInsets;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.geometry.size.Unit;
+import com.github.weisj.jsvg.geometry.util.GeometryUtil;
 import com.github.weisj.jsvg.nodes.SVGNode;
 import com.github.weisj.jsvg.nodes.animation.Animate;
 import com.github.weisj.jsvg.nodes.animation.Set;
@@ -118,22 +121,44 @@ public final class Filter extends ContainerNode {
             @NotNull Rectangle2D elementBounds) {
         Rectangle2D.Double filterRegion = filterUnits.computeViewBounds(
                 context.measureContext(), elementBounds, x, y, width, height);
+        Rectangle2D graphicsClipBounds = g.getClipBounds();
 
-        FilterLayoutContext filterLayoutContext = new FilterLayoutContext(filterPrimitiveUnits, elementBounds);
-        Rectangle2D clippedElementBounds = elementBounds.createIntersection(g.getClipBounds());
-        filterLayoutContext.resultChannels().addResult(DefaultFilterChannel.SourceGraphic, clippedElementBounds);
-        filterLayoutContext.resultChannels().addResult(DefaultFilterChannel.LastResult, clippedElementBounds);
-        filterLayoutContext.resultChannels().addResult(DefaultFilterChannel.SourceAlpha, clippedElementBounds);
+        FilterLayoutContext filterLayoutContext =
+                new FilterLayoutContext(filterPrimitiveUnits, elementBounds, graphicsClipBounds);
+
+        Rectangle2D clippedElementBounds = elementBounds.createIntersection(graphicsClipBounds);
+
+        Rectangle2D effectiveFilterRegion = filterRegion.createIntersection(graphicsClipBounds);
+        LayoutBounds elementLayoutBounds = new LayoutBounds(effectiveFilterRegion, new FloatInsets());
+        LayoutBounds clippedElementLayoutBounds = new LayoutBounds(clippedElementBounds, new FloatInsets());
+        LayoutBounds sourceDependentBounds = elementLayoutBounds.transform(
+                (data, flags) -> flags.operatesOnWholeFilterRegion
+                        ? data
+                        : clippedElementLayoutBounds.resolve(flags));
+
+        filterLayoutContext.resultChannels().addResult(DefaultFilterChannel.LastResult, elementLayoutBounds);
+        filterLayoutContext.resultChannels().addResult(DefaultFilterChannel.SourceGraphic, sourceDependentBounds);
+        filterLayoutContext.resultChannels().addResult(DefaultFilterChannel.SourceAlpha, sourceDependentBounds);
 
         for (SVGNode child : children()) {
-            FilterPrimitive filterPrimitive = (FilterPrimitive) child;
-            filterPrimitive.layoutFilter(context, filterLayoutContext);
+            try {
+                FilterPrimitive filterPrimitive = (FilterPrimitive) child;
+                filterPrimitive.layoutFilter(context, filterLayoutContext);
+            } catch (IllegalFilterStateException ignored) {
+                // Just carry on doing layout
+            }
         }
 
-        Rectangle2D clipHeuristic = filterLayoutContext.resultChannels().get(DefaultFilterChannel.LastResult);
+        LayoutBounds.Data clipHeuristic = filterLayoutContext.resultChannels()
+                .get(DefaultFilterChannel.LastResult)
+                .resolve(LayoutBounds.ComputeFlags.INITIAL);
+
+        FloatInsets insets = clipHeuristic.clipBoundsEscapeInsets();
+        Rectangle2D clipHeuristicBounds = clipHeuristic.bounds().createIntersection(
+                GeometryUtil.grow(graphicsClipBounds, insets));
 
         BlittableImage blitImage = BlittableImage.create(
-                ImageUtil::createCompatibleTransparentImage, context, clipHeuristic,
+                ImageUtil::createCompatibleTransparentImage, context, clipHeuristicBounds,
                 filterRegion, elementBounds, UnitType.UserSpaceOnUse);
 
         return new FilterInfo(g, blitImage, elementBounds);

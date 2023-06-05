@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2023 Jannis Weis
+ * Copyright (c) 2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,24 +19,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.weisj.jsvg.attributes;
-
-import java.awt.*;
+package com.github.weisj.jsvg.attributes.filter;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum SpreadMethod {
-    Pad(MultipleGradientPaint.CycleMethod.NO_CYCLE),
-    Reflect(MultipleGradientPaint.CycleMethod.REFLECT),
-    Repeat(MultipleGradientPaint.CycleMethod.REPEAT);
+public interface FilterChannelKey {
 
-    private final MultipleGradientPaint.CycleMethod cycleMethod;
+    @NotNull
+    Object key();
 
-    SpreadMethod(MultipleGradientPaint.CycleMethod cycleMethod) {
-        this.cycleMethod = cycleMethod;
-    }
+    class StringKey implements FilterChannelKey {
+        private final @NotNull String key;
 
-    public @NotNull MultipleGradientPaint.CycleMethod cycleMethod() {
-        return cycleMethod;
+        public StringKey(@NotNull String key) {
+            this.key = key;
+        }
+
+        @Override
+        public @NotNull Object key() {
+            return key;
+        }
+
+        @Override
+        public String toString() {
+            return "StringKey{" +
+                    "key='" + key + '\'' +
+                    '}';
+        }
     }
 }

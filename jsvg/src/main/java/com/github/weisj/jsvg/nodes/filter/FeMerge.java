@@ -22,13 +22,14 @@
 package com.github.weisj.jsvg.nodes.filter;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.attributes.filter.DefaultFilterChannel;
+import com.github.weisj.jsvg.attributes.filter.FilterChannelKey;
+import com.github.weisj.jsvg.attributes.filter.LayoutBounds;
 import com.github.weisj.jsvg.geometry.size.Length;
 import com.github.weisj.jsvg.nodes.container.ContainerNode;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
@@ -46,7 +47,7 @@ public final class FeMerge extends ContainerNode implements FilterPrimitive {
     public static final String TAG = "feMerge";
 
     private FilterPrimitiveBase filterPrimitiveBase;
-    private Object[] inputChannels;
+    private FilterChannelKey[] inputChannels;
 
     @Override
     public @NotNull String tagName() {
@@ -60,7 +61,7 @@ public final class FeMerge extends ContainerNode implements FilterPrimitive {
         filterPrimitiveBase = new FilterPrimitiveBase(attributeNode);
 
         List<FeMergeNode> nodes = childrenOfType(FeMergeNode.class);
-        inputChannels = new Object[nodes.size()];
+        inputChannels = new FilterChannelKey[nodes.size()];
         for (int i = 0; i < inputChannels.length; i++) {
             inputChannels[i] = nodes.get(i).inputChannel();
         }
@@ -99,11 +100,10 @@ public final class FeMerge extends ContainerNode implements FilterPrimitive {
                     filterLayoutContext);
             return;
         }
-        Rectangle2D in = filterLayoutContext.resultChannels().get(inputChannels[0]);
-        Rectangle2D result = in.getBounds2D();
+        LayoutBounds result = filterLayoutContext.resultChannels().get(inputChannels[0]);
         for (int i = 1; i < inputChannels.length; i++) {
-            Rectangle2D channelBounds = filterLayoutContext.resultChannels().get(inputChannels[i]);
-            Rectangle2D.union(channelBounds, result, result);
+            LayoutBounds channelBounds = filterLayoutContext.resultChannels().get(inputChannels[i]);
+            result = result.union(channelBounds);
         }
         filterPrimitiveBase.saveLayoutResult(result, filterLayoutContext);
     }

@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.github.weisj.jsvg.attributes.UnitType;
+import com.github.weisj.jsvg.attributes.filter.LayoutBounds;
 import com.github.weisj.jsvg.geometry.util.GeometryUtil;
 import com.github.weisj.jsvg.nodes.animation.Animate;
 import com.github.weisj.jsvg.nodes.animation.Set;
@@ -80,15 +81,10 @@ public final class FeOffset extends AbstractFilterPrimitive {
 
     @Override
     public void layoutFilter(@NotNull RenderContext context, @NotNull FilterLayoutContext filterLayoutContext) {
-        Rectangle2D input = impl().layoutInput(filterLayoutContext);
-        Point2D off = offset(null, filterLayoutContext.primitiveUnits(), filterLayoutContext.elementBounds());
-        impl().saveLayoutResult(
-                new Rectangle2D.Double(
-                        input.getX() - off.getX(),
-                        input.getY() - off.getY(),
-                        input.getWidth() + 2 * off.getX(),
-                        input.getHeight() + 2 * off.getY()),
-                filterLayoutContext);
+        LayoutBounds input = impl().layoutInput(filterLayoutContext);
+        Point2D.Double off = offset(null, filterLayoutContext.primitiveUnits(), filterLayoutContext.elementBounds());
+        LayoutBounds result = input.translate((float) off.x, (float) off.y, filterLayoutContext);
+        impl().saveLayoutResult(result, filterLayoutContext);
     }
 
     @Override

@@ -27,29 +27,25 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.github.weisj.jsvg.attributes.filter.DefaultFilterChannel;
+import com.github.weisj.jsvg.attributes.filter.FilterChannelKey;
 import com.github.weisj.jsvg.util.ConstantProvider;
 import com.github.weisj.jsvg.util.LazyProvider;
 import com.github.weisj.jsvg.util.Provider;
 
 public final class ChannelStorage<T> {
-    private final @NotNull Map<@NotNull String, @NotNull Provider<T>> storage = new HashMap<>();
+    private final @NotNull Map<@NotNull Object, @NotNull Provider<T>> storage = new HashMap<>();
 
-    public void addResult(@NotNull Object key, @NotNull T value) {
-        storage.put(key.toString(), new ConstantProvider<>(value));
+    public void addResult(@NotNull FilterChannelKey key, @NotNull T value) {
+        storage.put(key.key(), new ConstantProvider<>(value));
     }
 
-    public void addResult(@NotNull DefaultFilterChannel key, @NotNull Supplier<T> value) {
-        storage.put(key.toString(), new LazyProvider<>(value));
+    public void addResult(@NotNull FilterChannelKey key, @NotNull Supplier<T> value) {
+        storage.put(key.key(), new LazyProvider<>(value));
     }
 
-    public void addResult(@NotNull DefaultFilterChannel key, @NotNull T value) {
-        storage.put(key.toString(), new ConstantProvider<>(value));
-    }
-
-    public @NotNull T get(@NotNull Object key) {
-        Provider<T> provider = storage.get(key.toString());
-        if (provider == null) throw new IllegalFilterStateException();
+    public @NotNull T get(@NotNull FilterChannelKey key) {
+        Provider<T> provider = storage.get(key.key());
+        if (provider == null) throw new IllegalFilterStateException("Channel " + key + " not found.");
         return provider.get();
     }
 }

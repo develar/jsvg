@@ -28,6 +28,7 @@ import java.util.Locale;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.github.weisj.jsvg.attributes.filter.LayoutBounds;
 import com.github.weisj.jsvg.nodes.animation.Animate;
 import com.github.weisj.jsvg.nodes.animation.Set;
 import com.github.weisj.jsvg.nodes.prototype.spec.Category;
@@ -103,17 +104,18 @@ public final class FeColorMatrix extends AbstractFilterPrimitive {
 
     @Override
     public void layoutFilter(@NotNull RenderContext context, @NotNull FilterLayoutContext filterLayoutContext) {
-        if (filter != null && filter.isLinear()) {
-            impl().saveLayoutResult(impl().layoutInput(filterLayoutContext), filterLayoutContext);
-        } else {
-            impl().saveLayoutResult(filterLayoutContext.filterPrimitiveRegion(context.measureContext(), this),
-                    filterLayoutContext);
-        }
+        // Doesn't change the input bounds regardless whether filter is specified or not.
+        // If the filter is null or linear we can operate only on the visible area of the element.
+        // Otherwise, we need to consider the whole filter region.
+        LayoutBounds bounds = impl()
+                .layoutInput(filterLayoutContext)
+                .withFlags(new LayoutBounds.ComputeFlags(filter != null && !filter.isLinear()));
+        impl().saveLayoutResult(bounds, filterLayoutContext);
     }
 
     @Override
     public void applyFilter(@NotNull RenderContext context, @NotNull FilterContext filterContext) {
-        @Nullable AffineRGBImageFilter f = filter;
+        @Nullable RGBImageFilter f = filter;
         if (f == null) {
             impl().noop(filterContext);
             return;

@@ -38,14 +38,16 @@ import java.util.Objects;
 public final class SVGDocument {
     private static final boolean DEBUG = false;
     private final @NotNull SVG root;
+    private final @NotNull FloatSize size;
 
     public SVGDocument(@NotNull SVG root) {
         this.root = root;
+        float em = SVGFont.defaultFontSize();
+        this.size = root.sizeForTopLevel(em, SVGFont.exFromEm(em));
     }
 
     public @NotNull FloatSize size() {
-        float em = SVGFont.defaultFontSize();
-        return root.sizeForTopLevel(em, SVGFont.exFromEm(em));
+        return size;
     }
 
     public void render(@Nullable JComponent component, @NotNull Graphics2D g) {
