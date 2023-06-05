@@ -21,23 +21,25 @@
  */
 package com.github.weisj.jsvg.parser;
 
-import java.util.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.SVGDocument;
 import com.github.weisj.jsvg.attributes.AttributeParser;
-import com.github.weisj.jsvg.nodes.*;
+import com.github.weisj.jsvg.nodes.SVG;
+import com.github.weisj.jsvg.nodes.SVGNode;
+import com.github.weisj.jsvg.nodes.Style;
+import com.github.weisj.jsvg.nodes.Use;
 import com.github.weisj.jsvg.nodes.container.CommonRenderableContainerNode;
 import com.github.weisj.jsvg.parser.css.CssParser;
 import com.github.weisj.jsvg.parser.css.StyleSheet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public final class SVGDocumentBuilder {
 
     private static final int MAX_USE_NESTING_DEPTH = 15;
 
-    private final Map<String, Object> namedElements = new HashMap<>();
+    private final Map<String, ParsedElement> namedElements = new HashMap<>();
     private final List<Use> useElements = new ArrayList<>();
     private final List<Style> styleElements = new ArrayList<>();
     private final List<StyleSheet> styleSheets = new ArrayList<>();
