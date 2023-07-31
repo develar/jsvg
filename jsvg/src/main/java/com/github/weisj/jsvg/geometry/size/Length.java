@@ -67,7 +67,7 @@ public final class Length {
             case CM:
                 return inchesPerCm * pixelsPerInch * value;
             case MM:
-                return 0.1f * inchesPerCm + pixelsPerInch * value;
+                return value / 0.26458333333333333333333333333333f;
             case PT:
                 return (1f / 72f) * pixelsPerInch * value;
             case PC:
