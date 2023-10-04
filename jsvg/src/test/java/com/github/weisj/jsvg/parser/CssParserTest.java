@@ -75,7 +75,6 @@ class CssParserTest {
         assertNoRulesProduced.accept(".a :");
         assertNoRulesProduced.accept(".a { .b }");
         assertNoRulesProduced.accept(".a { .b : a; }");
-        assertNoRulesProduced.accept(".a { b : a }");
 
         var s = cssParser.parse(inputFromString("#rule { c : d; }"));
         assertTrue(s.idRules().containsKey("rule"));
@@ -110,6 +109,15 @@ class CssParserTest {
         assertEquals(p, sheet.idRules().get("rule1"));
         assertEquals(p, sheet.idRules().get("rule2"));
         assertEquals(p, sheet.idRules().get("rule3"));
+    }
+
+    @Test
+    void ruleWithoutSemicolon() {
+        SimpleCssParser cssParser = new SimpleCssParser();
+        var s = cssParser.parse(inputFromString(".cls{fill:#6e6e6e}"));
+        assertEquals(1, s.classRules().size());
+        assertTrue(s.classRules().containsKey("cls"));
+        assertEquals(List.of(new StyleProperty("fill", "#6e6e6e")), s.classRules().get("cls"));
     }
 
     @Test

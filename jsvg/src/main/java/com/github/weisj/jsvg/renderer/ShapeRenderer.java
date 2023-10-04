@@ -21,6 +21,16 @@
  */
 package com.github.weisj.jsvg.renderer;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.github.weisj.jsvg.attributes.MarkerOrientation;
 import com.github.weisj.jsvg.attributes.PaintOrder;
 import com.github.weisj.jsvg.attributes.Radian;
@@ -29,15 +39,7 @@ import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.geometry.size.FloatSize;
 import com.github.weisj.jsvg.nodes.Marker;
 import com.github.weisj.jsvg.nodes.ShapeNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
-import java.util.Set;
+import com.github.weisj.jsvg.util.GraphicsResetHelper;
 
 public final class ShapeRenderer {
     private static final boolean DEBUG_MARKERS = false;
@@ -53,7 +55,7 @@ public final class ShapeRenderer {
             this.opacity = opacity;
         }
 
-        private boolean isVisible() {
+        boolean isVisible() {
             return opacity > 0 && paint.isVisible();
         }
     }
@@ -106,30 +108,31 @@ public final class ShapeRenderer {
         Set<VectorEffect> vectorEffects = shapePaintContext.vectorEffects;
         VectorEffect.applyEffects(shapePaintContext.vectorEffects, g,
                 shapePaintContext.context, shapePaintContext.transform);
+        GraphicsResetHelper resetHelper = new GraphicsResetHelper(g);
 
         for (PaintOrder.Phase phase : paintOrder.phases()) {
-            Graphics2D phaseGraphics = (Graphics2D) g.create();
             RenderContext phaseContext = shapePaintContext.context.deriveForChildGraphics();
             switch (phase) {
-                case FILL -> {
+                case FILL:
                     if (canBeFilledHint) {
-                        ShapeRenderer.renderShapeFill(phaseContext, phaseGraphics, paintShape);
+                        ShapeRenderer.renderShapeFill(phaseContext, resetHelper.graphics(), paintShape);
                     }
-                }
-                case STROKE -> {
+                    break;
+                case STROKE:
                     Shape strokeShape = paintShape.shape;
                     if (vectorEffects.contains(VectorEffect.NonScalingStroke)
-                        && !vectorEffects.contains(VectorEffect.NonScalingSize)) {
-                        strokeShape = VectorEffect.applyNonScalingStroke(phaseGraphics, phaseContext, strokeShape);
+                            && !vectorEffects.contains(VectorEffect.NonScalingSize)) {
+                        strokeShape =
+                                VectorEffect.applyNonScalingStroke(resetHelper.graphics(), phaseContext, strokeShape);
                     }
-                    renderShapeStroke(phaseContext, phaseGraphics,
-                        new PaintShape(strokeShape, paintShape.bounds), shapePaintContext.stroke);
-                }
-                case MARKERS -> {
-                    if (markerInfo != null) renderMarkers(phaseGraphics, phaseContext, paintShape, markerInfo);
-                }
+                    ShapeRenderer.renderShapeStroke(phaseContext, resetHelper.graphics(),
+                            new PaintShape(strokeShape, paintShape.bounds), shapePaintContext.stroke);
+                    break;
+                case MARKERS:
+                    if (markerInfo != null) renderMarkers(resetHelper.graphics(), phaseContext, paintShape, markerInfo);
+                    break;
             }
-            phaseGraphics.dispose();
+            resetHelper.reset();
         }
     }
 
@@ -196,7 +199,7 @@ public final class ShapeRenderer {
             float dy = dyIn;
 
             switch (type) {
-                case PathIterator.SEG_MOVETO -> {
+                case PathIterator.SEG_MOVETO:
                     dxIn = 0;
                     dyIn = 0;
                     x = xStart = args[0];
@@ -207,36 +210,35 @@ public final class ShapeRenderer {
                     }
                     if (markerToPaint != null) {
                         paintSingleMarker(markerInfo.node, context, g, markerToPaintType, markerToPaint,
-                            xPaint, yPaint, 0, 0, dx, dy);
+                                xPaint, yPaint, 0, 0, dx, dy);
                         if (onlyFirst) return;
                     }
                     markerToPaint = nextMarker;
                     markerToPaintType = nextMarkerType;
                     continue;
-                }
-                case PathIterator.SEG_LINETO -> {
+                case PathIterator.SEG_LINETO:
                     dxOut = dxIn = args[0] - x;
                     dyOut = dyIn = args[1] - y;
                     x = args[0];
                     y = args[1];
-                }
-                case PathIterator.SEG_QUADTO -> {
+                    break;
+                case PathIterator.SEG_QUADTO:
                     dxOut = args[0] - x;
                     dyOut = args[1] - y;
                     dxIn = args[2] - args[0];
                     dyIn = args[3] - args[1];
                     x = args[2];
                     y = args[3];
-                }
-                case PathIterator.SEG_CUBICTO -> {
+                    break;
+                case PathIterator.SEG_CUBICTO:
                     dxOut = args[0] - x;
                     dyOut = args[1] - y;
                     dxIn = args[4] - args[2];
                     dyIn = args[5] - args[3];
                     x = args[4];
                     y = args[5];
-                }
-                case PathIterator.SEG_CLOSE -> {
+                    break;
+                case PathIterator.SEG_CLOSE:
                     dxOut = dxIn = xStart - x;
                     dyOut = dyIn = yStart - y;
                     x = xStart;
@@ -245,8 +247,9 @@ public final class ShapeRenderer {
                         nextMarker = end;
                         nextMarkerType = MarkerOrientation.MarkerType.END;
                     }
-                }
-                default -> throw new IllegalStateException();
+                    break;
+                default:
+                    throw new IllegalStateException();
             }
 
             paintSingleMarker(markerInfo.node, context, g, markerToPaintType, markerToPaint,
@@ -260,9 +263,9 @@ public final class ShapeRenderer {
                 x, y, dxIn, dyIn, 0, 0);
     }
 
-    private static void paintSingleMarker(@NotNull ShapeNode shapeNode, @NotNull RenderContext context,
-                                          @NotNull Graphics2D g, @Nullable MarkerOrientation.MarkerType type, @Nullable Marker marker,
-                                          float x, float y, float dxIn, float dyIn, float dxOut, float dyOut) {
+    public static void paintSingleMarker(@NotNull ShapeNode shapeNode, @NotNull RenderContext context,
+            @NotNull Graphics2D g, @Nullable MarkerOrientation.MarkerType type, @Nullable Marker marker,
+            float x, float y, float dxIn, float dyIn, float dxOut, float dyOut) {
         if (marker == null) return;
         assert type != null;
 

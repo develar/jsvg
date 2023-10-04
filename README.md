@@ -21,13 +21,15 @@ scripting languages or interaction. Animations aren't currently implemented but 
 This library aims to be as lightweight as possible. Generally JSVG uses ~50% less memory than svgSalamander and
 ~98% less than Batik.
 
+JSVG is used by the [Jetbrains IDEA IDE](https://github.com/JetBrains/intellij-community) suite for rendering their interface icons.
+
 ## How to use
 
 The library is available on maven central:
 
 ````kotlin
 dependencies {
-    implementation("com.github.weisj:jsvg:1.0.0")
+    implementation("com.github.weisj:jsvg:1.2.0")
 }
 ````
 
