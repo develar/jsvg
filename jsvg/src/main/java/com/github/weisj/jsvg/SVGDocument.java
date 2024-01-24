@@ -32,8 +32,11 @@ import com.github.weisj.jsvg.renderer.awt.JComponentPlatformSupport;
 import com.github.weisj.jsvg.renderer.awt.NullPlatformSupport;
 import com.github.weisj.jsvg.renderer.awt.PlatformSupport;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.Objects;
 
 public final class SVGDocument {
     private static final boolean DEBUG = false;
@@ -61,7 +64,7 @@ public final class SVGDocument {
         renderWithPlatform(platformSupport, graphics2D, bounds);
     }
 
-    private float computePlatformFontSize(@NotNull PlatformSupport platformSupport, @NotNull Graphics2D g) {
+    private static float computePlatformFontSize(@NotNull PlatformSupport platformSupport, @NotNull Graphics2D g) {
         Font f = g.getFont();
         if (f != null) return f.getSize2D();
         return platformSupport.fontSize();
