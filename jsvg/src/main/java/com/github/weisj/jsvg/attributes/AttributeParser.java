@@ -32,13 +32,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class AttributeParser {
 
@@ -153,12 +148,14 @@ public final class AttributeParser {
     }
 
     public double[] parseDoubleList(@Nullable String value) {
-        List<String> values = parseStringList(value, SeparatorMode.COMMA_AND_WHITESPACE);
-        double[] ret = new double[values.size()];
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = parseDouble(values.get(i), 0);
+        if (value == null || value.isEmpty()) return new double[0];
+        List<Double> list = new ArrayList<>();
+        ParserBase base = new ParserBase(value, 0);
+        while (base.hasNext()) {
+            list.add(base.nextDouble());
+            base.consumeWhiteSpaceOrSeparator();
         }
-        return ret;
+        return list.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
     public List<String> parseStringList(@Nullable String value, SeparatorMode separatorMode) {

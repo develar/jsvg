@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Jannis Weis
+ * Copyright (c) 2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,19 +19,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.weisj.jsvg.parser;
+package com.github.weisj.jsvg.renderer.awt;
 
-import java.io.IOException;
-import java.net.URI;
+import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.github.weisj.jsvg.parser.resources.RenderableResource;
+import com.github.weisj.jsvg.attributes.font.SVGFont;
 
-@FunctionalInterface
-public interface ResourceLoader {
+public interface PlatformSupport {
+
+    interface TargetSurface {
+        void repaint();
+    }
 
     @Nullable
-    UIFuture<RenderableResource> loadImage(@NotNull URI uri) throws IOException;
+    ImageObserver imageObserver();
+
+    @Nullable
+    TargetSurface targetSurface();
+
+    default float fontSize() {
+        return SVGFont.defaultFontSize();
+    }
+
+    default @NotNull Image createImage(@NotNull ImageProducer imageProducer) {
+        return Toolkit.getDefaultToolkit().createImage(imageProducer);
+    }
+
 }

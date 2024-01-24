@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Jannis Weis
+ * Copyright (c) 2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,19 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.weisj.jsvg.parser;
+package com.github.weisj.jsvg.renderer.awt;
 
-import java.io.IOException;
-import java.net.URI;
+import java.awt.image.ImageObserver;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.github.weisj.jsvg.parser.resources.RenderableResource;
+public final class NullPlatformSupport implements PlatformSupport {
 
-@FunctionalInterface
-public interface ResourceLoader {
+    @Override
+    public @Nullable ImageObserver imageObserver() {
+        return null;
+    }
 
-    @Nullable
-    UIFuture<RenderableResource> loadImage(@NotNull URI uri) throws IOException;
+    @Override
+    public @Nullable TargetSurface targetSurface() {
+        return null;
+    }
 }

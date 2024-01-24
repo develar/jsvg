@@ -21,6 +21,13 @@
  */
 package com.github.weisj.jsvg.renderer;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.github.weisj.jsvg.attributes.FillRule;
 import com.github.weisj.jsvg.attributes.Percentage;
 import com.github.weisj.jsvg.attributes.ViewBox;
@@ -31,18 +38,11 @@ import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.attributes.stroke.StrokeResolver;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.nodes.prototype.Mutator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.image.ImageProducer;
+import com.github.weisj.jsvg.renderer.awt.PlatformSupport;
 
 public final class RenderContext {
 
-    private final @Nullable JComponent targetComponent;
+    private final @NotNull PlatformSupport awtSupport;
     private final @NotNull MeasureContext measureContext;
     private final @NotNull PaintContext paintContext;
 
@@ -56,9 +56,9 @@ public final class RenderContext {
     private final @NotNull AffineTransform rootTransform;
     private final @NotNull AffineTransform userSpaceTransform;
 
-    public static @NotNull RenderContext createInitial(@Nullable JComponent targetComponent,
+    public static @NotNull RenderContext createInitial(@Nullable PlatformSupport awtSupport,
             @NotNull MeasureContext measureContext) {
-        return new RenderContext(targetComponent,
+        return new RenderContext(awtSupport,
                 new AffineTransform(),
                 new AffineTransform(),
                 RenderContextDefaults.DEFAULT_CONTEXT,
@@ -69,7 +69,7 @@ public final class RenderContext {
                 null);
     }
 
-    RenderContext(@Nullable JComponent targetComponent,
+    RenderContext(@NotNull PlatformSupport platformSupport,
             @NotNull AffineTransform rootTransform,
             @NotNull AffineTransform userSpaceTransform,
             @NotNull PaintContext paintContext,
@@ -78,7 +78,7 @@ public final class RenderContext {
             @NotNull MeasurableFontSpec fontSpec,
             @NotNull FillRule fillRule,
             @Nullable ContextElementAttributes contextElementAttributes) {
-        this.targetComponent = targetComponent;
+        this.awtSupport = platformSupport;
         this.rootTransform = rootTransform;
         this.userSpaceTransform = userSpaceTransform;
         this.paintContext = paintContext;
@@ -111,7 +111,7 @@ public final class RenderContext {
 
         FontRenderContext effectiveFrc = fontRenderContext.derive(frc);
 
-        return new RenderContext(targetComponent, rootTransform, new AffineTransform(userSpaceTransform),
+        return new RenderContext(awtSupport, rootTransform, new AffineTransform(userSpaceTransform),
                 newPaintContext, newMeasureContext, effectiveFrc, newFontSpec, newFillRule, newContextAttributes);
     }
 
@@ -175,8 +175,8 @@ public final class RenderContext {
         userSpaceTransform.concatenate(at);
     }
 
-    public @Nullable JComponent targetComponent() {
-        return targetComponent;
+    public @NotNull PlatformSupport platformSupport() {
+        return awtSupport;
     }
 
     public @NotNull MeasureContext measureContext() {
@@ -247,19 +247,11 @@ public final class RenderContext {
                 "\n  measureContext=" + measureContext +
                 ",\n paintContext=" + paintContext +
                 ",\n fontSpec=" + fontSpec +
-                ",\n targetComponent=" + targetComponent +
+                ",\n awtSupport=" + awtSupport +
                 ",\n contextElementAttributes=" + contextElementAttributes +
                 ",\n fillRule=" + fillRule +
                 ",\n baseTransform=" + rootTransform +
                 ",\n userSpaceTransform=" + userSpaceTransform +
                 "\n}";
-    }
-
-    public @NotNull Image createImage(@NotNull ImageProducer imageProducer) {
-        if (targetComponent != null) {
-            return targetComponent.createImage(imageProducer);
-        } else {
-            return Toolkit.getDefaultToolkit().createImage(imageProducer);
-        }
     }
 }

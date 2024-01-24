@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Jannis Weis
+ * Copyright (c) 2021-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -20,6 +20,11 @@
  *
  */
 package com.github.weisj.jsvg.nodes;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.github.weisj.jsvg.attributes.Overflow;
 import com.github.weisj.jsvg.attributes.ViewBox;
@@ -100,6 +105,12 @@ public final class SVG extends CommonInnerViewContainer {
         isTopLevel = attributeNode.parent() == null;
         isDataScaled = Boolean.parseBoolean(attributeNode.getValue("data-scaled"));
         super.build(attributeNode);
+    }
+
+    @Override
+    protected @NotNull Point2D outerLocation(@NotNull MeasureContext context) {
+        if (isTopLevel) return new Point(0, 0);
+        return super.outerLocation(context);
     }
 
     @Override

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Jannis Weis
+ * Copyright (c) 2022-2023 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -40,6 +40,12 @@ import javax.imageio.stream.ImageInputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.github.weisj.jsvg.SVGDocument;
+import com.github.weisj.jsvg.parser.SVGLoader;
+import com.github.weisj.jsvg.parser.resources.ImageResource;
+import com.github.weisj.jsvg.parser.resources.RenderableResource;
+import com.github.weisj.jsvg.parser.resources.SVGResource;
+
 public final class ResourceUtil {
 
     private static final Logger LOGGER = Logger.getLogger(ResourceUtil.class.getName());
@@ -51,7 +57,26 @@ public final class ResourceUtil {
             .map(s -> "image/" + s.toLowerCase(Locale.ENGLISH))
             .collect(Collectors.toSet());
 
-    public static @Nullable BufferedImage loadImage(@NotNull URI uri) throws IOException {
+    public static @Nullable RenderableResource loadImage(@NotNull URI uri) throws IOException {
+        String path = uri.getPath();
+        if (path != null && path.endsWith(".svg")) {
+            SVGLoader loader = new SVGLoader();
+            try {
+                SVGDocument document = loader.load(uri.toURL());
+                if (document != null) {
+                    return new SVGResource(document);
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Could not load svg resource", e);
+            }
+        }
+
+        BufferedImage img = loadToBufferedImage(uri);
+        if (img == null) return null;
+        return new ImageResource(img);
+    }
+
+    private static @Nullable BufferedImage loadToBufferedImage(@NotNull URI uri) throws IOException {
         String scheme = uri.getScheme();
         if ("data".equals(scheme)) {
             DataUri dataUri = DataUri.parse(uri.toString(), StandardCharsets.UTF_8);
@@ -83,8 +108,9 @@ public final class ResourceUtil {
         param.setDestination(image);
 
         try {
-            image = reader.read(0, param); // Don't really need the return value here, as it will always be same value
-                                           // as "image"
+            image = reader.read(0, param);
+            // Don't really need the return value here, as it will always be same value
+            // as "image"
         } catch (Exception e) {
             // Ignore this exception or display a warning or similar, for exceptions happening during decoding
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
