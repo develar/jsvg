@@ -60,7 +60,7 @@ public final class SVGDocument {
     private void render(@Nullable JComponent component, @NotNull Graphics2D graphics2D, @Nullable ViewBox bounds) {
         PlatformSupport platformSupport = component != null
                 ? new JComponentPlatformSupport(component)
-                : new NullPlatformSupport();
+                : NullPlatformSupport.INSTANCE;
         renderWithPlatform(platformSupport, graphics2D, bounds);
     }
 

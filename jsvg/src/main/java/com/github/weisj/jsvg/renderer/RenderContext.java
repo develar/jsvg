@@ -21,13 +21,6 @@
  */
 package com.github.weisj.jsvg.renderer;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.github.weisj.jsvg.attributes.FillRule;
 import com.github.weisj.jsvg.attributes.Percentage;
 import com.github.weisj.jsvg.attributes.ViewBox;
@@ -39,6 +32,12 @@ import com.github.weisj.jsvg.attributes.stroke.StrokeResolver;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.nodes.prototype.Mutator;
 import com.github.weisj.jsvg.renderer.awt.PlatformSupport;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 public final class RenderContext {
 

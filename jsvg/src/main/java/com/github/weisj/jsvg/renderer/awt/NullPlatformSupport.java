@@ -21,11 +21,12 @@
  */
 package com.github.weisj.jsvg.renderer.awt;
 
-import java.awt.image.ImageObserver;
-
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.image.ImageObserver;
+
 public final class NullPlatformSupport implements PlatformSupport {
+    public static final NullPlatformSupport INSTANCE = new NullPlatformSupport();
 
     @Override
     public @Nullable ImageObserver imageObserver() {

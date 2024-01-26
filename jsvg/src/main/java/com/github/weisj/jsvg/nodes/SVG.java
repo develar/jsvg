@@ -21,11 +21,6 @@
  */
 package com.github.weisj.jsvg.nodes;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.github.weisj.jsvg.attributes.Overflow;
 import com.github.weisj.jsvg.attributes.ViewBox;
 import com.github.weisj.jsvg.attributes.font.SVGFont;
@@ -42,6 +37,7 @@ import com.github.weisj.jsvg.nodes.text.Text;
 import com.github.weisj.jsvg.parser.AttributeNode;
 import com.github.weisj.jsvg.renderer.NodeRenderer;
 import com.github.weisj.jsvg.renderer.RenderContext;
+import com.github.weisj.jsvg.renderer.awt.NullPlatformSupport;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -138,7 +134,7 @@ public final class SVG extends CommonInnerViewContainer {
 
     public void renderWithSize(float width, float height, float em, Graphics2D g) {
         MeasureContext measureContext = new MeasureContext(width, height, em, SVGFont.exFromEm(em));
-        RenderContext context = RenderContext.createInitial(null, measureContext);
+        RenderContext context = RenderContext.createInitial(NullPlatformSupport.INSTANCE, measureContext);
         ViewBox bounds = new ViewBox(width, height);
         applyTransform(g, context);
         g.clip(bounds);
