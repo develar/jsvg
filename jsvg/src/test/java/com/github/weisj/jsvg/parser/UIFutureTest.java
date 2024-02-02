@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Jannis Weis
+ * Copyright (c) 2022-2024 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -26,12 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.awt.image.ImageObserver;
 import java.util.concurrent.CountDownLatch;
 
-import javax.swing.*;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
+import com.github.weisj.jsvg.renderer.awt.NullPlatformSupport;
 import com.github.weisj.jsvg.renderer.awt.PlatformSupport;
 
 class UIFutureTest {
@@ -40,7 +39,7 @@ class UIFutureTest {
     void testValueUiFuture() {
         Object o = new Object();
         UIFuture<Object> future = new ValueUIFuture<>(o);
-        assertTrue(future.checkIfReady(null));
+        assertTrue(future.checkIfReady(new NullPlatformSupport()));
         assertEquals(o, future.get());
     }
 

@@ -112,6 +112,7 @@ allprojects {
             }
             format("svg") {
                 target("**/*.svg")
+                targetExclude("**/brokenUpCharContent.svg")
                 eclipseWtp(EclipseWtpFormatterStep.XML)
             }
             plugins.withType<JavaPlugin>().configureEach {
@@ -296,7 +297,7 @@ allprojects {
                         )
                         name.set(
                             (project.findProperty("artifact.name") as? String)
-                                ?: project.name.capitalize().replace("-", " ")
+                                ?: project.name.replaceFirstChar { it.uppercase() }.replace("-", " ")
                         )
                         url.set("https://github.com/weisJ/jsvg")
                         organization {

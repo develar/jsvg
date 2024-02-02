@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023-2024 Jannis Weis
+ * Copyright (c) 2024 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,32 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.weisj.jsvg.parser.resources;
+package com.github.weisj.jsvg;
 
-import java.awt.geom.AffineTransform;
+import static com.github.weisj.jsvg.ReferenceTest.ReferenceTestResult.SUCCESS;
+import static com.github.weisj.jsvg.ReferenceTest.compareImages;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
-import com.github.weisj.jsvg.SVGDocument;
-import com.github.weisj.jsvg.geometry.size.FloatSize;
-import com.github.weisj.jsvg.renderer.Output;
-import com.github.weisj.jsvg.renderer.RenderContext;
+class CSSTest {
 
-public class SVGResource implements RenderableResource {
-    private final @NotNull SVGDocument document;
-
-    public SVGResource(@NotNull SVGDocument document) {
-        this.document = document;
-    }
-
-    @Override
-    public @NotNull FloatSize intrinsicSize(@NotNull RenderContext context) {
-        return document.size();
-    }
-
-    @Override
-    public void render(@NotNull Output output, @NotNull RenderContext context, @NotNull AffineTransform imgTransform) {
-        output.applyTransform(imgTransform);
-        document.renderWithPlatform(context.platformSupport(), output, null);
+    @Test
+    void testBrokenUpContent() {
+        assertEquals(SUCCESS, compareImages("css/brokenUpCharContent.svg"));
     }
 }

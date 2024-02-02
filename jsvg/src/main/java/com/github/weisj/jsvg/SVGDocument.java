@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2023 Jannis Weis
+ * Copyright (c) 2021-2024 Jannis Weis
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -21,13 +21,22 @@
  */
 package com.github.weisj.jsvg;
 
+import java.awt.*;
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
+import java.util.Objects;
+
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.github.weisj.jsvg.attributes.ViewBox;
 import com.github.weisj.jsvg.attributes.font.SVGFont;
 import com.github.weisj.jsvg.geometry.size.FloatSize;
 import com.github.weisj.jsvg.geometry.size.MeasureContext;
 import com.github.weisj.jsvg.nodes.SVG;
-import com.github.weisj.jsvg.renderer.NodeRenderer;
-import com.github.weisj.jsvg.renderer.RenderContext;
+import com.github.weisj.jsvg.renderer.*;
 import com.github.weisj.jsvg.renderer.awt.JComponentPlatformSupport;
 import com.github.weisj.jsvg.renderer.awt.NullPlatformSupport;
 import com.github.weisj.jsvg.renderer.awt.PlatformSupport;
@@ -53,6 +62,16 @@ public final class SVGDocument {
         return size;
     }
 
+    public @NotNull Shape computeShape() {
+        return computeShape(null);
+    }
+
+    public @NotNull Shape computeShape(@Nullable ViewBox viewBox) {
+        Area accumulator = new Area(new Path2D.Float());
+        renderWithPlatform(NullPlatformSupport.INSTANCE, new ShapeOutput(accumulator), viewBox);
+        return accumulator;
+    }
+
     public void render(@Nullable JComponent component, @NotNull Graphics2D g) {
         render(component, g, null);
     }
@@ -61,48 +80,55 @@ public final class SVGDocument {
         PlatformSupport platformSupport = component != null
                 ? new JComponentPlatformSupport(component)
                 : NullPlatformSupport.INSTANCE;
-        renderWithPlatform(platformSupport, graphics2D, bounds);
-    }
-
-    private static float computePlatformFontSize(@NotNull PlatformSupport platformSupport, @NotNull Graphics2D g) {
-        Font f = g.getFont();
-        if (f != null) return f.getSize2D();
-        return platformSupport.fontSize();
-    }
-
-    public void renderWithPlatform(@NotNull PlatformSupport platformSupport, @NotNull Graphics2D graphics2D,
-            @Nullable ViewBox bounds) {
         Graphics2D g = (Graphics2D) graphics2D.create();
         setupSVGRenderingHints(g);
+        Output output = new Graphics2DOutput(g);
+        renderWithPlatform(platformSupport, output, bounds);
+        output.dispose();
+    }
 
-        float defaultEm = computePlatformFontSize(platformSupport, g);
+    private float computePlatformFontSize(@NotNull PlatformSupport platformSupport, @NotNull Output output) {
+        return output.contextFontSize().orElseGet(platformSupport::fontSize);
+    }
+
+    public void renderWithPlatform(@NotNull PlatformSupport platformSupport, @NotNull Output output,
+            @Nullable ViewBox bounds) {
+        RenderContext context = prepareRenderContext(platformSupport, output, bounds);
+
+        if (bounds == null) bounds = new ViewBox(root.size(context));
+
+
+        if (DEBUG) {
+            final ViewBox finalBounds = bounds;
+            output.debugPaint(g -> {
+                g.setColor(Color.RED);
+                g.draw(finalBounds);
+            });
+        }
+
+        output.applyClip(bounds);
+        output.translate(bounds.x, bounds.y);
+
+        try (NodeRenderer.Info info = NodeRenderer.createRenderInfo(root, context, output, null)) {
+            Objects.requireNonNull(info);
+            root.renderWithSize(bounds.size(), root.viewBox(context), info.context, info.output);
+        }
+    }
+
+    private @NotNull RenderContext prepareRenderContext(
+            @NotNull PlatformSupport platformSupport,
+            @NotNull Output output,
+            @Nullable ViewBox bounds) {
+        float defaultEm = computePlatformFontSize(platformSupport, output);
         float defaultEx = SVGFont.exFromEm(defaultEm);
-
+        // TODO: Abstract away Graphics2D to allow a "ShapeCollector" context.
         MeasureContext initialMeasure = bounds != null
                 ? MeasureContext.createInitial(bounds.size(), defaultEm, defaultEx)
                 : MeasureContext.createInitial(root.sizeForTopLevel(defaultEm, defaultEx), defaultEm, defaultEx);
         RenderContext context = RenderContext.createInitial(platformSupport, initialMeasure);
 
-        if (bounds == null) bounds = new ViewBox(root.size(context));
-
-        root.applyTransform(g, context);
-
-        if (DEBUG) {
-            Paint paint = g.getPaint();
-            g.setColor(Color.MAGENTA);
-            g.draw(bounds);
-            g.setPaint(paint);
-        }
-
-        g.clip(bounds);
-        g.translate(bounds.x, bounds.y);
-
-        try (NodeRenderer.Info info = NodeRenderer.createRenderInfo(root, context, g, null)) {
-            Objects.requireNonNull(info);
-            root.renderWithSize(bounds.size(), root.viewBox(context), info.context, info.g);
-        }
-
-        g.dispose();
+        root.applyTransform(output, context);
+        return context;
     }
 
     private static void setupSVGRenderingHints(@NotNull Graphics2D g) {
