@@ -35,6 +35,7 @@ import com.github.weisj.jsvg.nodes.prototype.spec.ElementCategories;
 import com.github.weisj.jsvg.nodes.prototype.spec.PermittedContent;
 import com.github.weisj.jsvg.nodes.text.Text;
 import com.github.weisj.jsvg.parser.AttributeNode;
+import com.github.weisj.jsvg.renderer.Graphics2DOutput;
 import com.github.weisj.jsvg.renderer.NodeRenderer;
 import com.github.weisj.jsvg.renderer.RenderContext;
 import com.github.weisj.jsvg.renderer.awt.NullPlatformSupport;
@@ -136,15 +137,16 @@ public final class SVG extends CommonInnerViewContainer {
         MeasureContext measureContext = new MeasureContext(width, height, em, SVGFont.exFromEm(em));
         RenderContext context = RenderContext.createInitial(NullPlatformSupport.INSTANCE, measureContext);
         ViewBox bounds = new ViewBox(width, height);
-        applyTransform(g, context);
+        Graphics2DOutput output = new Graphics2DOutput(g);
+        applyTransform(output, context);
         g.clip(bounds);
-        try (NodeRenderer.Info info = NodeRenderer.createRenderInfo(this, context, g, null)) {
+        try (NodeRenderer.Info info = NodeRenderer.createRenderInfo(this, context, output, null)) {
             renderWithSize(
                 /* useSiteSize = */ bounds.size(),
                 /* view = */ viewBox(context),
                 /* preserveAspectRatio = */ null,
                 /* context = */ Objects.requireNonNull(info).context,
-                /* g = */ info.g
+                /* g = */ info.output
             );
         }
     }
